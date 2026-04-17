@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<title>MOMENTY</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&family=Gaegu&family=Noto+Sans+KR:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a0f12;--cream:#fff5f5;--paper:#fffafa;--hot:#c62828;--lime:#ffb4b4;--sky:#ef9a9a;--sun:#ff8a80;--violet:#b71c1c;--coral:#e53935;--mint:#ffcdd2;--muted:#8d6e73;--line:#efd8dc}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#141414;font-family:'Noto Sans KR',sans-serif;color:var(--ink);overflow:hidden}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,textarea,select{font-family:inherit}
+ 
+body{background:radial-gradient(circle at 20% 20%,#3d1f25 0,#140b0d 60%),#140b0d;display:grid;place-items:center;padding:20px}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.12;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+ 
+.phone{width:420px;max-width:100%;height:min(900px,100vh - 40px);background:var(--ink);border-radius:40px;padding:10px;box-shadow:0 24px 70px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.05);position:relative;display:flex;flex-direction:column}
+.notch{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:120px;height:28px;background:var(--ink);border-radius:999px;z-index:100}
+.screen{flex:1;background:var(--cream);border-radius:30px;overflow:hidden;display:flex;flex-direction:column;position:relative;background-image:radial-gradient(circle at 10% 10%,rgba(198,40,40,.10),transparent 30%),radial-gradient(circle at 90% 80%,rgba(239,154,154,.12),transparent 35%)}
+.screen::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;opacity:.18;mix-blend-mode:multiply;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.25'/></svg>")}
+@media(max-width:768px){html,body{height:100dvh;overflow:hidden}body{padding:0;background:var(--ink)}.phone{width:100%;height:100dvh;border-radius:0;padding:0;box-shadow:none}.notch{display:none}.screen{border-radius:0}.viewport{padding-bottom:110px}.tabnav{padding-bottom:calc(env(safe-area-inset-bottom,12px) + 14px)}}
+ 
+.status{display:flex;justify-content:space-between;align-items:center;padding:14px 28px 8px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;position:relative;z-index:2}
+ 
+.appbar{padding:8px 20px 14px;position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center}
+.appbar .title{font-family:'Black Han Sans',sans-serif;font-size:24px;letter-spacing:-0.5px;display:flex;align-items:center;gap:8px}
+.appbar .dot{width:10px;height:10px;background:var(--hot);border:1.5px solid var(--ink);border-radius:50%;transform:translateY(-2px);box-shadow:0 0 0 3px rgba(198,40,40,.12)}
+.hactions{display:flex;gap:8px}
+.ibtn{width:40px;height:40px;border-radius:50%;background:var(--paper);border:2px solid var(--ink);display:grid;place-items:center;font-size:16px;box-shadow:2px 2px 0 var(--ink);transition:transform .1s;position:relative}
+.ibtn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.ibtn .bdg{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--hot);border:2px solid var(--cream);color:#fff;font-size:9px;display:grid;place-items:center;font-weight:900}
+ 
+.viewport{flex:1;overflow-y:auto;overflow-x:hidden;position:relative;z-index:2;padding-bottom:90px;scrollbar-width:thin}
+.viewport::-webkit-scrollbar{width:4px}
+.viewport::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:4px}
+.page{padding:0 16px 24px;animation:fi .2s ease}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+ 
+.tabnav{position:absolute;bottom:0;left:0;right:0;z-index:10;background:var(--cream);border-top:2px solid var(--ink);padding:10px 8px calc(env(safe-area-inset-bottom,12px) + 12px);display:flex;justify-content:space-around;backdrop-filter:blur(10px)}
+.tbt{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;color:var(--muted);font-size:11px;font-weight:700;font-family:'Jua',sans-serif;position:relative;transition:color .15s}
+.tbt .ico{font-size:22px;transition:transform .2s}
+.tbt.active{color:var(--ink)}
+.tbt.active .ico{transform:translateY(-2px) scale(1.1)}
+.tbt.active::before{content:"";position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:34px;height:4px;background:var(--hot);border-radius:0 0 4px 4px}
+ 
+.fab{position:absolute;bottom:100px;right:20px;z-index:8;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--hot),var(--coral));color:var(--cream);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);font-size:26px;display:grid;place-items:center;animation:pls 2s ease-in-out infinite}
+@keyframes pls{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.fab:active{animation:none;transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+ 
+/* HOME */
+.greet{background:var(--hot);color:var(--cream);border:2.5px solid var(--ink);border-radius:20px;padding:14px 18px;box-shadow:4px 4px 0 var(--ink);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;position:relative;overflow:hidden}
+.greet::before{content:"";position:absolute;width:120px;height:120px;right:-30px;top:-30px;background:var(--sun);border:2px solid var(--ink);border-radius:50%;opacity:.4}
+.greet h2{font-family:'Black Han Sans',sans-serif;font-size:20px;line-height:1.1;letter-spacing:-.5px}
+.greet p{font-size:11px;opacity:.9;margin-top:2px;font-weight:500}
+.weath{position:relative;z-index:2;background:var(--cream);color:var(--ink);border:2px solid var(--ink);border-radius:14px;padding:6px 12px;text-align:center;font-family:'Jua',sans-serif}
+.weath .temp{font-size:16px;display:block}
+.weath .ic{font-size:20px}
+ 
+.bd-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px;scrollbar-width:none}
+.bd-tabs::-webkit-scrollbar{display:none}
+.bd-tab{flex:0 0 auto;padding:7px 14px;border:2px solid var(--ink);border-radius:999px;font-size:12px;font-weight:700;background:var(--paper);white-space:nowrap}
+.bd-tab.active{background:var(--hot);color:var(--cream);box-shadow:2px 2px 0 var(--ink)}
+ 
+.post{background:var(--paper);border:2px solid var(--ink);border-radius:16px;padding:14px 16px;margin-bottom:12px;box-shadow:3px 3px 0 var(--ink);transition:transform .1s;cursor:pointer}
+.post:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.post .pmeta{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:8px}
+.post .bdt{padding:2px 8px;border-radius:999px;font-size:10px;background:var(--lime);border:1.5px solid var(--ink);color:var(--ink)}
+.post h4{font-family:'Jua',sans-serif;font-size:16px;margin-bottom:4px;letter-spacing:-.3px;line-height:1.3}
+.post p{font-size:13px;color:#444;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.post .pstats{display:flex;gap:14px;margin-top:10px;font-size:12px;color:#666;font-weight:700;align-items:center}
+.post .pstats .lbtn{background:none;border:none;font-size:12px;font-weight:700;color:#666;cursor:pointer;padding:2px 4px;display:inline-flex;align-items:center;gap:4px}
+.post .pstats .lbtn.on{color:var(--hot)}
+.post .pstats .sbtn.on{color:var(--sun);filter:drop-shadow(0 0 1px var(--ink))}
+ 
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty .em{font-size:48px;margin-bottom:12px;display:block}
+.empty h3{font-family:'Jua',sans-serif;color:var(--ink);margin-bottom:6px}
+.empty p{font-size:13px;line-height:1.5}
+ 
+/* BOARDS PAGE */
+.bd-grid-app{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.bd-tile{background:var(--paper);border:2.5px solid var(--ink);border-radius:16px;padding:16px 12px;text-align:center;box-shadow:3px 3px 0 var(--ink);position:relative;transition:transform .1s;cursor:pointer}
+.bd-tile:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.bd-tile .em{font-size:32px;display:block;margin-bottom:6px}
+.bd-tile h4{font-family:'Jua',sans-serif;font-size:14px;letter-spacing:-.3px}
+.bd-tile small{display:block;font-size:10px;color:var(--muted);margin-top:3px;font-weight:700}
+.bd-tile .cnt{position:absolute;top:6px;right:6px;background:var(--hot);color:var(--cream);font-size:10px;padding:2px 6px;border-radius:999px;font-weight:700;border:1.5px solid var(--ink)}
+ 
+/* MY PAGE */
+.profile-card{background:var(--violet);color:var(--cream);border:2.5px solid var(--ink);border-radius:22px;padding:18px;box-shadow:5px 5px 0 var(--ink);margin-bottom:14px;display:flex;gap:14px;align-items:center;position:relative;overflow:hidden}
+.profile-card::before{content:"★";position:absolute;right:-10px;bottom:-30px;font-size:120px;opacity:.18;font-family:'Black Han Sans',sans-serif}
+.ava-big{width:64px;height:64px;border-radius:50%;border:3px solid var(--ink);background:var(--sun);display:grid;place-items:center;font-size:32px;box-shadow:3px 3px 0 var(--ink);flex-shrink:0;color:var(--ink)}
+.profile-card h2{font-family:'Black Han Sans',sans-serif;font-size:20px;letter-spacing:-.5px}
+.profile-card .sch{font-family:'Jua',sans-serif;font-size:12px;opacity:.9;margin-top:3px}
+.profile-card .bio{font-size:11px;margin-top:4px;opacity:.8;line-height:1.4;font-weight:500}
+ 
+.p-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.p-stats .box{background:var(--paper);border:2px solid var(--ink);border-radius:12px;padding:10px 6px;text-align:center;box-shadow:3px 3px 0 var(--ink);cursor:pointer;transition:transform .1s}
+.p-stats .box:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.p-stats strong{font-family:'Black Han Sans',sans-serif;font-size:20px;display:block;line-height:1}
+.p-stats small{font-size:10px;font-weight:700;color:var(--muted)}
+ 
+.menu-list{background:var(--paper);border:2px solid var(--ink);border-radius:16px;overflow:hidden;box-shadow:3px 3px 0 var(--ink)}
+.mi{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1.5px solid var(--line);font-weight:500;transition:background .1s;cursor:pointer}
+.mi:last-child{border-bottom:none}
+.mi:active{background:var(--cream)}
+.mi .ic{width:32px;height:32px;border-radius:10px;border:1.5px solid var(--ink);display:grid;place-items:center;font-size:14px;background:var(--sky)}
+.mi:nth-child(2) .ic{background:var(--hot);color:var(--cream)}
+.mi:nth-child(3) .ic{background:var(--lime)}
+.mi:nth-child(4) .ic{background:var(--sun)}
+.mi:nth-child(5) .ic{background:var(--coral);color:var(--cream)}
+.mi:nth-child(6) .ic{background:var(--violet);color:var(--cream)}
+.mi .lb{flex:1;font-size:13px;font-weight:700}
+.mi .ar{color:var(--muted);font-size:16px}
+ 
+/* FRIENDS PAGE */
+.sub-header{display:flex;align-items:center;gap:10px;padding:0 4px 14px;position:sticky;top:0;background:var(--cream);z-index:3;padding-top:4px}
+.back{width:36px;height:36px;border-radius:50%;background:var(--paper);border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink);display:grid;place-items:center;font-size:16px;cursor:pointer}
+.sub-header h2{font-family:'Black Han Sans',sans-serif;font-size:22px;letter-spacing:-.5px;flex:1}
+ 
+.tab-switcher{display:flex;gap:6px;margin-bottom:14px;padding:4px;background:var(--paper);border:2px solid var(--ink);border-radius:12px;box-shadow:3px 3px 0 var(--ink)}
+.tab-switcher button{flex:1;padding:8px;border-radius:8px;font-size:13px;font-weight:700;font-family:'Jua',sans-serif}
+.tab-switcher button.active{background:var(--hot);color:var(--cream)}
+ 
+.friend-row{background:var(--paper);border:2px solid var(--ink);border-radius:14px;padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:2px 2px 0 var(--ink)}
+.fr-ava{width:42px;height:42px;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;font-size:20px;flex-shrink:0}
+.fr-info{flex:1;min-width:0}
+.fr-info h5{font-family:'Jua',sans-serif;font-size:14px;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fr-info small{font-size:11px;color:var(--muted);font-weight:700}
+.fr-btn{padding:6px 12px;border:2px solid var(--ink);border-radius:999px;font-size:11px;font-weight:700;font-family:'Jua',sans-serif;white-space:nowrap}
+.fr-btn.add{background:var(--lime);box-shadow:2px 2px 0 var(--ink)}
+.fr-btn.rm{background:var(--paper);color:var(--ink)}
+.fr-btn.added{background:var(--muted);color:#fff;border-color:var(--muted);box-shadow:none}
+ 
+/* POST DETAIL MODAL */
+.modal-bg{position:absolute;inset:0;background:rgba(0,0,0,.5);z-index:50;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--cream);width:100%;max-height:92%;border-radius:28px 28px 0 0;border-top:3px solid var(--ink);overflow:hidden;display:flex;flex-direction:column;animation:slideUp .3s cubic-bezier(.2,.9,.3,1.1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.m-head{padding:14px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--ink);background:var(--paper)}
+.m-head .handle{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:40px;height:4px;background:var(--muted);border-radius:999px;opacity:.5}
+.m-head h3{font-family:'Jua',sans-serif;font-size:17px}
+.m-head .close{font-size:22px;padding:4px 8px;cursor:pointer;color:var(--ink)}
+.m-body{flex:1;overflow-y:auto;padding:18px 20px;position:relative}
+ 
+.pd-author{display:flex;gap:10px;align-items:center;margin-bottom:14px}
+.pd-author .a-ic{width:38px;height:38px;border-radius:50%;background:var(--sun);border:2px solid var(--ink);display:grid;place-items:center;font-size:18px}
+.pd-author h5{font-family:'Jua',sans-serif;font-size:14px}
+.pd-author small{font-size:11px;color:var(--muted);font-weight:700}
+.pd-body h3{font-family:'Jua',sans-serif;font-size:20px;margin-bottom:10px;line-height:1.3}
+.pd-body p{font-size:14px;line-height:1.7;color:#333;white-space:pre-wrap}
+.pd-stats{display:flex;gap:16px;margin:16px 0;padding:12px 0;border-top:1.5px dashed var(--ink);border-bottom:1.5px dashed var(--ink);font-size:13px;color:#666;font-weight:700}
+.pd-stats button{display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:8px;transition:background .1s}
+.pd-stats button:active{background:var(--paper)}
+.pd-stats button.on{color:var(--hot)}
+.pd-stats button.son{color:var(--sun)}
+ 
+.comments{margin-top:8px}
+.comments h6{font-family:'Jua',sans-serif;font-size:14px;margin-bottom:10px}
+.comment{background:var(--paper);border:1.5px solid var(--ink);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.comment .c-who{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:4px}
+.comment p{font-size:13px;line-height:1.5}
+ 
+.comment-box{border-top:2px solid var(--ink);padding:10px 16px;display:flex;gap:8px;background:var(--paper)}
+.comment-box input{flex:1;padding:10px 14px;border:2px solid var(--ink);border-radius:999px;font-size:13px;outline:none;background:var(--cream)}
+.comment-box button{padding:10px 16px;background:var(--hot);color:var(--cream);border:2px solid var(--ink);border-radius:999px;font-family:'Jua',sans-serif;font-size:13px;box-shadow:2px 2px 0 var(--ink)}
+ 
+/* WRITE MODAL */
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-family:'Jua',sans-serif;font-size:13px;margin-bottom:6px;color:#444}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:12px 14px;border:2px solid var(--ink);border-radius:12px;font-size:14px;background:var(--paper);outline:none;font-weight:500}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{box-shadow:3px 3px 0 var(--sun)}
+.form-group textarea{resize:none;min-height:140px;line-height:1.5}
+.boards-pick{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.bp-opt{padding:10px 4px;border:2px solid var(--ink);border-radius:12px;background:var(--paper);font-size:10px;font-weight:700;text-align:center;cursor:pointer;transition:transform .1s}
+.bp-opt .em{font-size:18px;display:block;margin-bottom:3px}
+.bp-opt.sel{background:var(--hot);color:var(--cream)}
+.bp-opt:active{transform:scale(.95)}
+.submit-btn{width:100%;padding:14px;background:var(--hot);color:var(--cream);border:2.5px solid var(--ink);border-radius:999px;font-family:'Jua',sans-serif;font-size:16px;box-shadow:4px 4px 0 var(--ink);margin-top:10px;transition:transform .1s}
+.submit-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+ 
+/* NOTIFICATIONS DROPDOWN */
+.notif-panel{position:absolute;top:90px;right:16px;width:280px;background:var(--paper);border:2.5px solid var(--ink);border-radius:16px;box-shadow:6px 6px 0 var(--ink);z-index:30;max-height:400px;overflow:hidden;display:flex;flex-direction:column;animation:popIn .2s cubic-bezier(.2,.9,.3,1.3)}
+@keyframes popIn{from{opacity:0;transform:translateY(-8px) scale(.95)}to{opacity:1;transform:none}}
+.notif-panel h4{font-family:'Jua',sans-serif;padding:12px 16px;border-bottom:2px solid var(--ink);font-size:14px;background:var(--lime)}
+.notif-list{overflow-y:auto;flex:1}
+.notif-it{padding:10px 14px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start;cursor:pointer;transition:background .1s}
+.notif-it:active{background:var(--cream)}
+.notif-it:last-child{border-bottom:none}
+.notif-it.unread{background:rgba(198,255,61,.2)}
+.notif-it .ic{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--ink);background:var(--sky);display:grid;place-items:center;font-size:14px;flex-shrink:0}
+.notif-it .tx{font-size:12px;line-height:1.4;font-weight:500}
+.notif-it .tx strong{font-family:'Jua',sans-serif;display:block}
+.notif-it .tx .tm{font-size:10px;color:var(--muted);margin-top:2px}
+ 
+/* TOAST */
+.toast{position:absolute;bottom:110px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--cream);padding:10px 18px;border-radius:999px;font-size:13px;font-weight:700;opacity:0;transition:all .25s;z-index:80;box-shadow:0 10px 30px rgba(0,0,0,.3);pointer-events:none;border:2px solid var(--lime);white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+ 
+/* PROFILE EDIT MODAL */
+.avatar-pick{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:4px}
+.ap-opt{width:100%;aspect-ratio:1;border:2px solid var(--ink);border-radius:12px;background:var(--paper);font-size:22px;display:grid;place-items:center;cursor:pointer}
+.ap-opt.sel{background:var(--lime);box-shadow:2px 2px 0 var(--ink);transform:translate(-1px,-1px)}
+ 
+/* SETTINGS */
+.toggle{position:relative;width:44px;height:26px;background:var(--line);border:2px solid var(--ink);border-radius:999px;cursor:pointer;transition:background .2s}
+.toggle.on{background:var(--lime)}
+.toggle::after{content:"";position:absolute;top:1px;left:1px;width:18px;height:18px;background:var(--paper);border:1.5px solid var(--ink);border-radius:50%;transition:transform .2s}
+.toggle.on::after{transform:translateX(18px)}
+ 
+/* AD in feed */
+.ad-card{background:repeating-linear-gradient(45deg,var(--sun) 0 10px,var(--paper) 10px 20px);border:2.5px dashed var(--ink);border-radius:16px;padding:4px;position:relative;margin-bottom:12px}
+.ad-card::before{content:"광고";position:absolute;top:-10px;left:12px;background:var(--ink);color:var(--sun);padding:2px 8px;border-radius:999px;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;z-index:3}
+.ad-inside{background:var(--paper);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.ad-inside .aim{font-size:32px;width:50px;height:50px;background:var(--lime);border:2px solid var(--ink);border-radius:12px;display:grid;place-items:center}
+.ad-inside h5{font-family:'Jua',sans-serif;font-size:14px;margin-bottom:2px}
+.ad-inside small{font-size:11px;color:#555}
+.ad-inside .cta{padding:6px 12px;background:var(--hot);color:var(--cream);border:2px solid var(--ink);border-radius:999px;font-family:'Jua',sans-serif;font-size:11px;box-shadow:2px 2px 0 var(--ink)}
+
+/* Small mobile refinements */
+@media(max-width:430px){
+  .status{padding:12px 18px 6px}
+  .appbar{padding:8px 14px 12px}
+  .page{padding:0 12px 18px}
+  .greet{padding:14px}
+  .post{padding:12px 14px}
+  .notif-panel{right:10px;left:10px;width:auto}
+  .fab{right:16px;bottom:96px}
+}
+
+</style>
+</head>
+<body>
+ 
+<div class="phone">
+  <div class="notch"></div>
+  <div class="screen">
+    <div class="status">
+      <span id="clock">9:41</span>
+      <div style="display:flex;gap:6px"><span>📶</span><span>📡</span><span>🔋</span></div>
+    </div>
+ 
+    <div class="appbar">
+      <div class="title"><span class="dot"></span><span id="pTitle">MOMENTY</span></div>
+      <div class="hactions">
+        <button class="ibtn" onclick="toggleNotif()">🔔<span class="bdg" id="notifBdg">0</span></button>
+        <button class="ibtn" onclick="toast('검색 준비 중')">🔍</button>
+      </div>
+    </div>
+ 
+    <div class="viewport" id="vp"></div>
+ 
+    <button class="fab" id="fab" onclick="openWrite()">✍️</button>
+ 
+    <div class="tabnav">
+      <button class="tbt" data-tab="home" onclick="go('home')"><span class="ico">🏠</span>Home</button>
+      <button class="tbt" data-tab="boards" onclick="go('boards')"><span class="ico">📋</span>Boards</button>
+      <button class="tbt" data-tab="scrap" onclick="go('scrap')"><span class="ico">🔖</span>Saved</button>
+      <button class="tbt" data-tab="my" onclick="go('my')"><span class="ico">👤</span>My</button>
+    </div>
+ 
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+ 
+<script>
+/* ==== CONSTANTS ==== */
+const BOARDS = [
+  {id:'country', emoji:'🌏', name:'나라별', desc:'교환·유학'},
+  {id:'market', emoji:'🛍️', name:'중고거래', desc:'교재·생활'},
+  {id:'meal', emoji:'🍚', name:'밥약', desc:'점심 약속'},
+  {id:'info', emoji:'📚', name:'정보', desc:'공지·꿀팁'},
+  {id:'class', emoji:'🎓', name:'같은수업', desc:'수업 친구'},
+  {id:'timetable', emoji:'📅', name:'시간표공유', desc:'시간표 교류'},
+  {id:'major', emoji:'💼', name:'전공별', desc:'학과'},
+  {id:'job', emoji:'📰', name:'취업', desc:'인턴·공채'},
+  {id:'review', emoji:'⭐', name:'강의후기', desc:'강의평'},
+  {id:'club', emoji:'🎨', name:'동아리', desc:'모집·활동'},
+  {id:'food', emoji:'🍕', name:'맛집', desc:'학교 근처'},
+  {id:'ad', emoji:'📢', name:'광고', desc:'스폰서'},
+  {id:'issue', emoji:'🔥', name:'이슈', desc:'실시간'},
+  {id:'rent', emoji:'🎒', name:'렌트4U', desc:'교내 대여'}
+];
+const BOARD_MAP = {}; BOARDS.forEach(b=>BOARD_MAP[b.id]=b);
+const AVATARS = ['🐰','🦊','🐻','🐼','🐶','🐯','🐨','🦁','🐸','🐵','🐹','🐱'];
+ 
+/* ==== SEED DATA ==== */
+function seed() {
+  return {
+    user: {name:'Mina', school:'UW–Madison', grade:'24', major:'Communication', avatar:'🐰', bio:'Moments, meetups, and campus stories.', points:1250, darkMode:false, notifOn:true},
+    posts: [
+      {id:'p1', boardId:'issue', title:'🔥 학관 화재?? 지금 소방차 왔음', body:'지금 학관 근처 연기 올라옴. 무슨 일임? 아시는 분?', author:'익명', authorAvatar:'🦊', time:Date.now()-5*60000, likes:342, liked:false, scrapped:false, comments:[{id:'c1', author:'익명', body:'나도 봤음... 소방차 3대 왔어', time:Date.now()-3*60000}]},
+      {id:'p2', boardId:'meal', title:'오늘 12시 공대 근처 같이 먹을 사람?', body:'고기정식 먹고싶은데 혼자 가기 애매해서요 ㅠㅠ 같이 가실 분 댓글주세요!', author:'익명', authorAvatar:'🐻', time:Date.now()-15*60000, likes:24, liked:false, scrapped:false, comments:[]},
+      {id:'p3', boardId:'review', title:'[UX 디자인 입문 / 박혜진 교수] 강력 추천', body:'과제는 많은데 포트폴리오용으로 쓸 수 있어서 좋음! 교수님 피드백도 진짜 꼼꼼하고 도움 많이 됨 💛 A+ 받고싶으면 꼭 들어라 ㄹㅇ', author:'지은', authorAvatar:'🐼', time:Date.now()-2*3600000, likes:189, liked:false, scrapped:false, comments:[]},
+      {id:'p4', boardId:'rent', title:'☂️ 우산 20개 · 학생회관 1층', body:'무료 대여중! 당일 반납 필수이고, 학생증 인증만 하면 OK. 지금 재고 넉넉함.', author:'학생회', authorAvatar:'🦁', time:Date.now()-4*3600000, likes:45, liked:false, scrapped:false, comments:[]},
+      {id:'p5', boardId:'market', title:'[팝니다] 맥북 에어 M2 120만원', body:'배터리 사이클 120회. 거의 안 썼어요. 정문 앞 직거래만. 쿨거래시 5만원 추가 할인!', author:'윤서', authorAvatar:'🐱', time:Date.now()-6*3600000, likes:48, liked:false, scrapped:false, comments:[]},
+      {id:'p6', boardId:'info', title:'수강신청 꿀팁 공유함 🍯', body:'어제 수강신청 성공한 사람인데 비법 하나 있음. 마우스 클릭보다 탭 키 쓰는 게 훨씬 빠름. 진짜임', author:'현우', authorAvatar:'🐸', time:Date.now()-8*3600000, likes:289, liked:false, scrapped:false, comments:[]},
+      {id:'p7', boardId:'country', title:'미시간대 교환학생 가는데 룸메이트 구해요', body:'2026 가을 출국! 같은 시기 가는 분 있나요? 기숙사 같이 쓸 사람 🇺🇸', author:'하은', authorAvatar:'🐹', time:Date.now()-10*3600000, likes:42, liked:false, scrapped:false, comments:[]},
+      {id:'p8', boardId:'food', title:'정문 새로 생긴 파스타집 ⭐⭐⭐⭐⭐', body:'크림파스타 9천원인데 양도 많고 맛도 좋음. 학생증 10% 할인! 점심시간엔 줄 서니 주의', author:'채원', authorAvatar:'🐨', time:Date.now()-12*3600000, likes:267, liked:false, scrapped:false, comments:[]},
+      {id:'p9', boardId:'club', title:'[록밴드 동아리] 26-1 신입 모집!', body:'악기 못해도 OK. 지원서는 4/25까지! 공연도 자주 있고 MT도 감. 관심 있으면 DM!', author:'준혁', authorAvatar:'🐵', time:Date.now()-18*3600000, likes:123, liked:false, scrapped:false, comments:[]},
+      {id:'p10', boardId:'job', title:'[합격후기] 삼성 DS 인턴 합격 💼', body:'자소서부터 면접까지 전 과정 공유할게요. 질문 받아요! 면접 꿀팁도 풀 예정', author:'지훈', authorAvatar:'🐯', time:Date.now()-24*3600000, likes:892, liked:false, scrapped:false, comments:[]}
+    ],
+    friends: [
+      {id:'f1', name:'지은', avatar:'🐼', school:'중앙대 · 경영', friend:true},
+      {id:'f2', name:'현우', avatar:'🐸', school:'중앙대 · 컴공', friend:true},
+      {id:'f3', name:'하은', avatar:'🐹', school:'중앙대 · 영문', friend:true},
+      {id:'f4', name:'채원', avatar:'🐨', school:'중앙대 · 디자인', friend:false},
+      {id:'f5', name:'준혁', avatar:'🐵', school:'중앙대 · 경제', friend:false},
+      {id:'f6', name:'윤서', avatar:'🐱', school:'중앙대 · 심리', friend:false},
+      {id:'f7', name:'지훈', avatar:'🐯', school:'중앙대 · 전자', friend:false}
+    ],
+    notifications: [
+      {id:'n1', icon:'❤️', text:'지은님이 내 글을 좋아해요', time:Date.now()-10*60000, unread:true},
+      {id:'n2', icon:'💬', text:'현우님이 댓글을 남겼어요', time:Date.now()-60*60000, unread:true},
+      {id:'n3', icon:'👥', text:'하은님이 친구가 되었어요', time:Date.now()-3*60*60000, unread:true},
+      {id:'n4', icon:'📢', text:'수강신청 시작 D-3', time:Date.now()-5*60*60000, unread:false}
+    ],
+    myPostIds: [], // posts I've written (just the IDs for 'my posts' view)
+    tab: 'home',
+    boardFilter: 'all'
+  };
+}
+ 
+/* ==== STATE ==== */
+let state;
+function load() {
+  try {
+    const saved = localStorage.getItem('campuzz_state');
+    if (saved) return JSON.parse(saved);
+  } catch(e) {}
+  return seed();
+}
+function save() {
+  try { localStorage.setItem('campuzz_state', JSON.stringify(state)); } catch(e) {}
+}
+state = load();
+ 
+/* ==== UTILS ==== */
+function timeAgo(ts) {
+  const d = Date.now() - ts;
+  if (d < 60000) return '방금 전';
+  if (d < 3600000) return Math.floor(d/60000)+'분 전';
+  if (d < 86400000) return Math.floor(d/3600000)+'시간 전';
+  const days = Math.floor(d/86400000);
+  if (days < 7) return days+'일 전';
+  return new Date(ts).toLocaleDateString('ko-KR');
+}
+function uid() { return 'x'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toast._tm);
+  toast._tm = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+ 
+/* ==== CLOCK ==== */
+function tick() {
+  const d = new Date();
+  document.getElementById('clock').textContent = `${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+tick(); setInterval(tick, 30000);
+ 
+/* ==== NAVIGATION ==== */
+const TITLES = {home:'MOMENTY', boards:'Boards', scrap:'Saved', my:'My Page', friends:'Friends', myposts:'My Posts', settings:'Settings'};
+function go(tab) {
+  state.tab = tab;
+  save();
+  render();
+}
+ 
+/* ==== RENDER ==== */
+function render() {
+  const vp = document.getElementById('vp');
+  document.getElementById('pTitle').textContent = TITLES[state.tab] || 'MOMENTY';
+  document.getElementById('fab').style.display = (state.tab==='home' || state.tab==='boards') ? 'grid' : 'none';
+  
+  // Tab nav active state
+  document.querySelectorAll('.tbt').forEach(b => {
+    const t = b.dataset.tab;
+    b.classList.toggle('active', t === state.tab || (state.tab==='friends' && t==='my') || (state.tab==='myposts' && t==='my') || (state.tab==='settings' && t==='my'));
+  });
+  
+  // Notif badge
+  const unread = state.notifications.filter(n=>n.unread).length;
+  const bdg = document.getElementById('notifBdg');
+  bdg.textContent = unread;
+  bdg.style.display = unread > 0 ? 'grid' : 'none';
+ 
+  if (state.tab === 'home') vp.innerHTML = renderHome();
+  else if (state.tab === 'boards') vp.innerHTML = renderBoards();
+  else if (state.tab === 'scrap') vp.innerHTML = renderScrap();
+  else if (state.tab === 'my') vp.innerHTML = renderMy();
+  else if (state.tab === 'friends') vp.innerHTML = renderFriends();
+  else if (state.tab === 'myposts') vp.innerHTML = renderMyPosts();
+  else if (state.tab === 'settings') vp.innerHTML = renderSettings();
+  
+  vp.scrollTop = 0;
+}
+ 
+function renderHome() {
+  const u = state.user;
+  const posts = state.boardFilter === 'all' ? state.posts : state.posts.filter(p => p.boardId === state.boardFilter);
+  const sorted = [...posts].sort((a,b)=>b.time-a.time);
+  
+  let html = `<div class="page">
+    <div class="greet">
+      <div><h2>안녕 ${u.name}야 👋</h2><p>오늘도 좋은 하루 보내자</p></div>
+      <div class="weath"><div class="ic">☀️</div><span class="temp">21°</span></div>
+    </div>
+    <div class="bd-tabs">
+      <button class="bd-tab ${state.boardFilter==='all'?'active':''}" onclick="filterBoard('all')">전체</button>
+      ${BOARDS.map(b => `<button class="bd-tab ${state.boardFilter===b.id?'active':''}" onclick="filterBoard('${b.id}')">${b.emoji} ${b.name}</button>`).join('')}
+    </div>`;
+  
+  if (sorted.length === 0) {
+    html += `<div class="empty"><span class="em">📭</span><h3>아직 게시글이 없어요</h3><p>첫 게시물을 작성해보세요! ✍️</p></div>`;
+  } else {
+    sorted.forEach((p, i) => {
+      html += renderPost(p);
+      // insert ad after 3rd post
+      if (i === 2) {
+        html += `<div class="ad-card"><div class="ad-inside"><div class="aim">☕</div><div style="flex:1"><h5>스타벅스 학생 쿠폰</h5><small>아메리카노 500원 할인!</small></div><button class="cta" onclick="toast('🎁 쿠폰 발급 중!')">받기</button></div></div>`;
+      }
+    });
+  }
+  html += '</div>';
+  return html;
+}
+ 
+function renderPost(p) {
+  const b = BOARD_MAP[p.boardId];
+  return `<div class="post" onclick="openPost('${p.id}')">
+    <div class="pmeta">
+      <span><span class="bdt" style="background:${boardColor(p.boardId)}">${b.emoji} ${b.name}</span> · ${p.author}</span>
+      <span>${timeAgo(p.time)}</span>
+    </div>
+    <h4>${escapeHtml(p.title)}</h4>
+    <p>${escapeHtml(p.body)}</p>
+    <div class="pstats">
+      <button class="lbtn ${p.liked?'on':''}" onclick="event.stopPropagation();toggleLike('${p.id}')">${p.liked?'❤️':'🤍'} ${p.likes}</button>
+      <span>💬 ${p.comments.length}</span>
+      <button class="sbtn ${p.scrapped?'on':''}" onclick="event.stopPropagation();toggleScrap('${p.id}')">${p.scrapped?'🔖':'🏷️'}</button>
+    </div>
+  </div>`;
+}
+ 
+function boardColor(id) {
+  const m = {country:'#ffcdd2', market:'#ef9a9a', meal:'#ff8a80', info:'#e57373', class:'#ad5a5a', timetable:'#ffb3b3', major:'#f8b4b4', job:'#ef9a9a', review:'#c62828', club:'#d97b7b', food:'#e53935', ad:'#ffab91', issue:'#b71c1c', rent:'#f4a6a6'};
+  return m[id] || '#c6ff3d';
+}
+ 
+function renderBoards() {
+  return `<div class="page">
+    <h2 style="font-family:'Black Han Sans',sans-serif;font-size:26px;letter-spacing:-.5px;margin-bottom:6px">📋 모든 게시판</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;font-weight:500">14개의 세분화된 커뮤니티. 원하는 카테고리를 선택하세요</p>
+    <div class="bd-grid-app">
+      ${BOARDS.map(b => {
+        const count = state.posts.filter(p=>p.boardId===b.id).length;
+        return `<div class="bd-tile" onclick="filterBoard('${b.id}');go('home')">
+          ${count>0?`<span class="cnt">${count}</span>`:''}
+          <span class="em">${b.emoji}</span>
+          <h4>${b.name}</h4>
+          <small>${b.desc}</small>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="ad-card"><div class="ad-inside"><div class="aim" style="background:var(--hot);color:#fff">🎯</div><div style="flex:1"><h5>광고주 모집중</h5><small>대학생 320만에게 노출</small></div><button class="cta" onclick="toast('📧 광고 문의!')">문의</button></div></div>
+  </div>`;
+}
+ 
+function renderScrap() {
+  const scrapped = state.posts.filter(p => p.scrapped);
+  let html = `<div class="page">
+    <h2 style="font-family:'Black Han Sans',sans-serif;font-size:26px;letter-spacing:-.5px;margin-bottom:6px">🔖 내 스크랩</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;font-weight:500">저장한 글 ${scrapped.length}개</p>`;
+  if (scrapped.length === 0) {
+    html += `<div class="empty"><span class="em">🏷️</span><h3>스크랩한 글이 없어요</h3><p>게시글 우측의 🏷️ 아이콘을 눌러<br>나중에 보고 싶은 글을 저장하세요!</p></div>`;
+  } else {
+    scrapped.forEach(p => html += renderPost(p));
+  }
+  html += '</div>';
+  return html;
+}
+ 
+function renderMy() {
+  const u = state.user;
+  const myPostCount = state.posts.filter(p => state.myPostIds.includes(p.id)).length;
+  const scrapCount = state.posts.filter(p => p.scrapped).length;
+  const friendCount = state.friends.filter(f => f.friend).length;
+  
+  return `<div class="page">
+    <div class="profile-card">
+      <div class="ava-big">${u.avatar}</div>
+      <div style="flex:1;min-width:0">
+        <h2>${u.name}</h2>
+        <div class="sch">${u.school} · ${u.major}</div>
+        <div class="bio">${u.bio}</div>
+      </div>
+    </div>
+    <div class="p-stats">
+      <div class="box" onclick="go('myposts')"><strong>${myPostCount}</strong><small>내 글</small></div>
+      <div class="box" onclick="go('scrap')"><strong>${scrapCount}</strong><small>스크랩</small></div>
+      <div class="box" onclick="go('friends')"><strong>${friendCount}</strong><small>친구</small></div>
+    </div>
+    <div class="menu-list">
+      <div class="mi" onclick="go('myposts')"><div class="ic">📝</div><div class="lb">내가 쓴 글</div><div class="ar">›</div></div>
+      <div class="mi" onclick="openProfileEdit()"><div class="ic">✏️</div><div class="lb">프로필 수정</div><div class="ar">›</div></div>
+      <div class="mi" onclick="go('friends')"><div class="ic">👥</div><div class="lb">친구 관리</div><div class="ar">›</div></div>
+      <div class="mi" onclick="toast('💎 보유 포인트: '+u.points+'P')"><div class="ic">💎</div><div class="lb">캠퍼즈 포인트 (${u.points}P)</div><div class="ar">›</div></div>
+      <div class="mi" onclick="go('settings')"><div class="ic">⚙️</div><div class="lb">설정</div><div class="ar">›</div></div>
+      <div class="mi" onclick="resetApp()"><div class="ic">🔄</div><div class="lb">앱 초기화</div><div class="ar">›</div></div>
+    </div>
+    <div style="margin-top:18px;text-align:center;color:var(--muted);font-size:11px;font-family:'Space Mono',monospace">MOMENTY v1.0 · Made with ❤️</div>
+  </div>`;
+}
+ 
+function renderFriends() {
+  const tab = state._friendTab || 'my';
+  const my = state.friends.filter(f => f.friend);
+  const suggest = state.friends.filter(f => !f.friend);
+  const list = tab === 'my' ? my : suggest;
+  
+  let html = `<div class="page">
+    <div class="sub-header">
+      <button class="back" onclick="go('my')">←</button>
+      <h2>👥 친구</h2>
+    </div>
+    <div class="tab-switcher">
+      <button class="${tab==='my'?'active':''}" onclick="setFriendTab('my')">내 친구 ${my.length}</button>
+      <button class="${tab==='suggest'?'active':''}" onclick="setFriendTab('suggest')">추천 ${suggest.length}</button>
+    </div>`;
+  
+  if (list.length === 0) {
+    html += `<div class="empty"><span class="em">🤝</span><h3>${tab==='my'?'아직 친구가 없어요':'추천 친구가 없어요'}</h3><p>${tab==='my'?'추천 친구 탭에서 친구를 추가해보세요!':'나중에 다시 확인해주세요'}</p></div>`;
+  } else {
+    list.forEach(f => {
+      html += `<div class="friend-row">
+        <div class="fr-ava" style="background:${['#ffd23f','#c6ff3d','#3ec1ff','#a06cff','#ff6b3d'][f.id.charCodeAt(1)%5]}">${f.avatar}</div>
+        <div class="fr-info"><h5>${f.name}</h5><small>${f.school}</small></div>
+        ${f.friend 
+          ? `<button class="fr-btn rm" onclick="removeFriend('${f.id}')">삭제</button>`
+          : `<button class="fr-btn add" onclick="addFriend('${f.id}')">+ 친구 추가</button>`}
+      </div>`;
+    });
+  }
+  html += '</div>';
+  return html;
+}
+ 
+function renderMyPosts() {
+  const mine = state.posts.filter(p => state.myPostIds.includes(p.id)).sort((a,b)=>b.time-a.time);
+  let html = `<div class="page">
+    <div class="sub-header">
+      <button class="back" onclick="go('my')">←</button>
+      <h2>📝 내가 쓴 글</h2>
+    </div>`;
+  if (mine.length === 0) {
+    html += `<div class="empty"><span class="em">✍️</span><h3>아직 쓴 글이 없어요</h3><p>하단 ✍️ 버튼으로 첫 글을 써보세요!</p></div>`;
+  } else {
+    mine.forEach(p => html += renderPost(p));
+  }
+  html += '</div>';
+  return html;
+}
+ 
+function renderSettings() {
+  const u = state.user;
+  return `<div class="page">
+    <div class="sub-header">
+      <button class="back" onclick="go('my')">←</button>
+      <h2>⚙️ 설정</h2>
+    </div>
+    <div class="menu-list" style="margin-bottom:14px">
+      <div class="mi"><div class="ic">🔔</div><div class="lb">알림 받기</div><div class="toggle ${u.notifOn?'on':''}" onclick="toggleSetting('notifOn')"></div></div>
+      <div class="mi"><div class="ic">🌙</div><div class="lb">다크 모드</div><div class="toggle ${u.darkMode?'on':''}" onclick="toggleSetting('darkMode')"></div></div>
+    </div>
+    <div class="menu-list">
+      <div class="mi" onclick="toast('👋 로그아웃은 아직 준비 중')"><div class="ic">🚪</div><div class="lb">로그아웃</div><div class="ar">›</div></div>
+      <div class="mi" onclick="toast('💬 고객센터 연결')"><div class="ic">💬</div><div class="lb">고객센터</div><div class="ar">›</div></div>
+      <div class="mi" onclick="toast('📋 약관 보기')"><div class="ic">📋</div><div class="lb">이용약관</div><div class="ar">›</div></div>
+    </div>
+  </div>`;
+}
+ 
+/* ==== ACTIONS ==== */
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+ 
+function filterBoard(id) {
+  state.boardFilter = id;
+  save();
+  render();
+}
+ 
+function toggleLike(id) {
+  const p = state.posts.find(x => x.id === id);
+  if (!p) return;
+  p.liked = !p.liked;
+  p.likes += p.liked ? 1 : -1;
+  save();
+  render();
+  if (p.liked) toast('❤️ 좋아요!');
+}
+ 
+function toggleScrap(id) {
+  const p = state.posts.find(x => x.id === id);
+  if (!p) return;
+  p.scrapped = !p.scrapped;
+  save();
+  render();
+  toast(p.scrapped ? '🔖 스크랩 완료!' : '스크랩 해제');
+}
+ 
+function addFriend(id) {
+  const f = state.friends.find(x => x.id === id);
+  if (!f) return;
+  f.friend = true;
+  state.notifications.unshift({id:uid(), icon:'👥', text:`${f.name}님과 친구가 되었어요`, time:Date.now(), unread:true});
+  save();
+  render();
+  toast(`🤝 ${f.name}님과 친구가 됐어요!`);
+}
+ 
+function removeFriend(id) {
+  const f = state.friends.find(x => x.id === id);
+  if (!f) return;
+  if (!confirm(`${f.name}님을 친구에서 삭제할까요?`)) return;
+  f.friend = false;
+  save();
+  render();
+  toast('친구 삭제됨');
+}
+ 
+function setFriendTab(t) {
+  state._friendTab = t;
+  render();
+}
+ 
+function toggleSetting(key) {
+  state.user[key] = !state.user[key];
+  save();
+  render();
+  toast(state.user[key] ? '✅ 켜짐' : '❌ 꺼짐');
+}
+ 
+function resetApp() {
+  if (!confirm('정말 앱을 초기화할까요?\n모든 데이터가 삭제됩니다.')) return;
+  localStorage.removeItem('campuzz_state');
+  state = seed();
+  save();
+  go('home');
+  toast('🔄 초기화 완료!');
+}
+ 
+/* ==== MODAL: POST DETAIL ==== */
+function openPost(id) {
+  const p = state.posts.find(x => x.id === id);
+  if (!p) return;
+  const b = BOARD_MAP[p.boardId];
+  
+  const html = `<div class="modal-bg" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div class="m-head">
+        <h3>${b.emoji} ${b.name}</h3>
+        <button class="close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="m-body">
+        <div class="pd-author">
+          <div class="a-ic">${p.authorAvatar||'💭'}</div>
+          <div><h5>${p.author}</h5><small>${timeAgo(p.time)}</small></div>
+        </div>
+        <div class="pd-body">
+          <h3>${escapeHtml(p.title)}</h3>
+          <p>${escapeHtml(p.body)}</p>
+        </div>
+        <div class="pd-stats">
+          <button class="${p.liked?'on':''}" onclick="toggleLike('${p.id}');openPost('${p.id}')">${p.liked?'❤️':'🤍'} ${p.likes}</button>
+          <span>💬 ${p.comments.length}</span>
+          <button class="${p.scrapped?'son':''}" onclick="toggleScrap('${p.id}');openPost('${p.id}')">${p.scrapped?'🔖':'🏷️'} 스크랩</button>
+          <button onclick="toast('🔗 링크 복사됨!')">🔗 공유</button>
+        </div>
+        <div class="comments">
+          <h6>💬 댓글 ${p.comments.length}</h6>
+          ${p.comments.length === 0 ? '<p style="font-size:13px;color:var(--muted);text-align:center;padding:20px">첫 댓글을 남겨보세요!</p>' : p.comments.map(c => `
+            <div class="comment">
+              <div class="c-who"><span>${c.author}</span><span>${timeAgo(c.time)}</span></div>
+              <p>${escapeHtml(c.body)}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="comment-box">
+        <input type="text" id="cmtIn" placeholder="댓글 입력..." onkeydown="if(event.key==='Enter')addComment('${p.id}')">
+        <button onclick="addComment('${p.id}')">전송</button>
+      </div>
+    </div>
+  </div>`;
+  
+  const host = document.createElement('div');
+  host.id = 'modalHost';
+  host.innerHTML = html;
+  document.querySelector('.screen').appendChild(host);
+  setTimeout(()=>{const i=document.getElementById('cmtIn');if(i)i.focus()},300);
+}
+ 
+function closeModal() {
+  const m = document.getElementById('modalHost');
+  if (m) m.remove();
+}
+ 
+function addComment(postId) {
+  const input = document.getElementById('cmtIn');
+  const txt = input.value.trim();
+  if (!txt) { toast('댓글을 입력해주세요'); return; }
+  const p = state.posts.find(x => x.id === postId);
+  if (!p) return;
+  p.comments.push({id:uid(), author:state.user.name, body:txt, time:Date.now()});
+  save();
+  input.value = '';
+  closeModal();
+  openPost(postId);
+  render();
+  toast('💬 댓글 작성 완료');
+}
+ 
+/* ==== MODAL: WRITE POST ==== */
+function openWrite() {
+  const html = `<div class="modal-bg" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div class="m-head">
+        <h3>✍️ 새 글 작성</h3>
+        <button class="close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="m-body">
+        <div class="form-group">
+          <label>게시판 선택</label>
+          <div class="boards-pick" id="wBoards">
+            ${BOARDS.map(b => `<button type="button" class="bp-opt" data-id="${b.id}" onclick="selBoard(this)"><span class="em">${b.emoji}</span>${b.name}</button>`).join('')}
+          </div>
+        </div>
+        <div class="form-group">
+          <label>제목</label>
+          <input type="text" id="wTitle" placeholder="제목을 입력하세요" maxlength="60">
+        </div>
+        <div class="form-group">
+          <label>내용</label>
+          <textarea id="wBody" placeholder="내용을 입력하세요... (익명으로 게시됩니다)" maxlength="500"></textarea>
+        </div>
+        <button class="submit-btn" onclick="submitPost()">작성 완료 🚀</button>
+      </div>
+    </div>
+  </div>`;
+  const host = document.createElement('div');
+  host.id = 'modalHost';
+  host.innerHTML = html;
+  document.querySelector('.screen').appendChild(host);
+  // auto-select current filter
+  const def = state.boardFilter !== 'all' ? state.boardFilter : 'info';
+  const btn = document.querySelector(`.bp-opt[data-id="${def}"]`);
+  if (btn) btn.classList.add('sel');
+}
+ 
+function selBoard(btn) {
+  document.querySelectorAll('.bp-opt').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+ 
+function submitPost() {
+  const selected = document.querySelector('.bp-opt.sel');
+  const title = document.getElementById('wTitle').value.trim();
+  const body = document.getElementById('wBody').value.trim();
+  if (!selected) { toast('게시판을 선택해주세요'); return; }
+  if (!title) { toast('제목을 입력해주세요'); return; }
+  if (!body) { toast('내용을 입력해주세요'); return; }
+  
+  const newPost = {
+    id: uid(),
+    boardId: selected.dataset.id,
+    title, body,
+    author: state.user.name,
+    authorAvatar: state.user.avatar,
+    time: Date.now(),
+    likes: 0, liked: false, scrapped: false,
+    comments: []
+  };
+  state.posts.unshift(newPost);
+  state.myPostIds.push(newPost.id);
+  state.user.points += 10;
+  save();
+  closeModal();
+  state.boardFilter = 'all';
+  go('home');
+  toast('🎉 게시글 작성 완료! +10P');
+}
+ 
+/* ==== MODAL: PROFILE EDIT ==== */
+function openProfileEdit() {
+  const u = state.user;
+  const html = `<div class="modal-bg" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div class="m-head">
+        <h3>✏️ 프로필 수정</h3>
+        <button class="close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="m-body">
+        <div class="form-group">
+          <label>아바타</label>
+          <div class="avatar-pick" id="avPick">
+            ${AVATARS.map(a => `<button type="button" class="ap-opt ${a===u.avatar?'sel':''}" data-a="${a}" onclick="selAvatar(this)">${a}</button>`).join('')}
+          </div>
+        </div>
+        <div class="form-group">
+          <label>닉네임</label>
+          <input type="text" id="eName" value="${escapeHtml(u.name)}" maxlength="10">
+        </div>
+        <div class="form-group">
+          <label>학교</label>
+          <input type="text" id="eSchool" value="${escapeHtml(u.school)}" maxlength="20">
+        </div>
+        <div class="form-group">
+          <label>학과</label>
+          <input type="text" id="eMajor" value="${escapeHtml(u.major)}" maxlength="20">
+        </div>
+        <div class="form-group">
+          <label>자기소개</label>
+          <textarea id="eBio" maxlength="60">${escapeHtml(u.bio)}</textarea>
+        </div>
+        <button class="submit-btn" onclick="saveProfile()">저장하기 💾</button>
+      </div>
+    </div>
+  </div>`;
+  const host = document.createElement('div');
+  host.id = 'modalHost';
+  host.innerHTML = html;
+  document.querySelector('.screen').appendChild(host);
+}
+ 
+function selAvatar(btn) {
+  document.querySelectorAll('.ap-opt').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+ 
+function saveProfile() {
+  const av = document.querySelector('.ap-opt.sel');
+  const name = document.getElementById('eName').value.trim();
+  const school = document.getElementById('eSchool').value.trim();
+  const major = document.getElementById('eMajor').value.trim();
+  const bio = document.getElementById('eBio').value.trim();
+  if (!name) { toast('닉네임을 입력해주세요'); return; }
+  if (av) state.user.avatar = av.dataset.a;
+  state.user.name = name;
+  state.user.school = school;
+  state.user.major = major;
+  state.user.bio = bio;
+  save();
+  closeModal();
+  render();
+  toast('✅ 프로필 저장 완료!');
+}
+ 
+/* ==== NOTIFICATIONS ==== */
+function toggleNotif() {
+  const existing = document.getElementById('notifPanel');
+  if (existing) { existing.remove(); return; }
+  const html = `<div class="notif-panel" id="notifPanel">
+    <h4>🔔 알림</h4>
+    <div class="notif-list">
+      ${state.notifications.length === 0 ? '<div class="empty" style="padding:30px"><p>알림이 없어요</p></div>' : state.notifications.map(n => `
+        <div class="notif-it ${n.unread?'unread':''}" onclick="readNotif('${n.id}')">
+          <div class="ic">${n.icon}</div>
+          <div class="tx"><strong>${n.text}</strong><div class="tm">${timeAgo(n.time)}</div></div>
+        </div>
+      `).join('')}
+    </div>
+  </div>`;
+  const host = document.createElement('div');
+  host.innerHTML = html;
+  document.querySelector('.screen').appendChild(host.firstElementChild);
+  // close on outside click
+  setTimeout(()=>{
+    document.addEventListener('click', closeNotifOutside, true);
+  }, 100);
+}
+ 
+function closeNotifOutside(e) {
+  const panel = document.getElementById('notifPanel');
+  if (panel && !panel.contains(e.target) && !e.target.closest('.ibtn')) {
+    panel.remove();
+    document.removeEventListener('click', closeNotifOutside, true);
+  }
+}
+ 
+function readNotif(id) {
+  const n = state.notifications.find(x => x.id === id);
+  if (n) { n.unread = false; save(); }
+  const panel = document.getElementById('notifPanel');
+  if (panel) panel.remove();
+  render();
+}
+ 
+/* ==== INIT ==== */
+go(state.tab || 'home');
+</script>
+</body>
+</html>
