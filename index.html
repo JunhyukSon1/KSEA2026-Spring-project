@@ -8,24 +8,24 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&family=Gaegu&family=Noto+Sans+KR:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#1a0f12;--cream:#fff5f5;--paper:#fffafa;--hot:#c62828;--lime:#ffb4b4;--sky:#ef9a9a;--sun:#ff8a80;--violet:#b71c1c;--coral:#e53935;--mint:#ffcdd2;--muted:#8d6e73;--line:#efd8dc}
+:root{--ink:#1a0f12;--cream:#fff5f5;--paper:#fffafa;--hot:#c62828;--lime:#ffb4b4;--sky:#ef9a9a;--sun:#ff8a80;--violet:#b71c1c;--coral:#e53935;--mint:#ffcdd2;--muted:#8d6e73;--line:#efd8dc;--bg1:#3d1f25;--bg2:#140b0d;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);--safe-left:env(safe-area-inset-left,0px);--safe-right:env(safe-area-inset-right,0px)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:#141414;font-family:'Noto Sans KR',sans-serif;color:var(--ink);overflow:hidden}
+html,body{height:100%;min-height:100dvh;background:#141414;font-family:'Noto Sans KR',sans-serif;color:var(--ink);overflow:hidden}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
 input,textarea,select{font-family:inherit}
  
-body{background:radial-gradient(circle at 20% 20%,#3d1f25 0,#140b0d 60%),#140b0d;display:grid;place-items:center;padding:20px}
+body{background:radial-gradient(circle at 20% 20%,var(--bg1) 0,var(--bg2) 60%),var(--bg2);display:grid;place-items:center;padding:12px}
 body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.12;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
  
-.phone{width:420px;max-width:100%;height:min(900px,100vh - 40px);background:var(--ink);border-radius:40px;padding:10px;box-shadow:0 24px 70px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.05);position:relative;display:flex;flex-direction:column}
+.phone{width:min(430px,100%);max-width:100%;height:min(932px,calc(100dvh - 24px));background:var(--ink);border-radius:40px;padding:10px;box-shadow:0 24px 70px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.05);position:relative;display:flex;flex-direction:column;overflow:hidden}
 .notch{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:120px;height:28px;background:var(--ink);border-radius:999px;z-index:100}
 .screen{flex:1;background:var(--cream);border-radius:30px;overflow:hidden;display:flex;flex-direction:column;position:relative;background-image:radial-gradient(circle at 10% 10%,rgba(198,40,40,.10),transparent 30%),radial-gradient(circle at 90% 80%,rgba(239,154,154,.12),transparent 35%)}
 .screen::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;opacity:.18;mix-blend-mode:multiply;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.25'/></svg>")}
-@media(max-width:768px){html,body{height:100dvh;overflow:hidden}body{padding:0;background:var(--ink)}.phone{width:100%;height:100dvh;border-radius:0;padding:0;box-shadow:none}.notch{display:none}.screen{border-radius:0}.viewport{padding-bottom:110px}.tabnav{padding-bottom:calc(env(safe-area-inset-bottom,12px) + 14px)}}
+@media(max-width:768px){html,body{height:100dvh;min-height:100dvh;overflow:hidden}body{padding:0;background:var(--ink)}.phone{width:100%;height:100dvh;border-radius:0;padding:0;box-shadow:none}.notch{display:none}.screen{border-radius:0}.status{padding-top:calc(10px + var(--safe-top))}.viewport{padding-bottom:calc(112px + var(--safe-bottom))}.fab{bottom:calc(92px + var(--safe-bottom));right:calc(16px + var(--safe-right))}.tabnav{padding-bottom:calc(12px + var(--safe-bottom))}}@media(max-width:430px){.appbar .title{font-size:22px}.ibtn{width:38px;height:38px}.page{padding:0 14px 24px}.greet{padding:14px 14px}.bd-grid-app{grid-template-columns:1fr 1fr;gap:9px}.boards-pick{grid-template-columns:repeat(3,1fr)}}@media(max-width:390px){.status{font-size:12px}.appbar{padding-top:6px}.appbar .title{font-size:20px}.fab{width:54px;height:54px;font-size:24px}.tbt .ico{font-size:20px}.tbt{font-size:10px}.comment-box{padding:10px 12px}.comment-box button{padding:10px 14px}}
  
-.status{display:flex;justify-content:space-between;align-items:center;padding:14px 28px 8px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;position:relative;z-index:2}
+.status{display:flex;justify-content:space-between;align-items:center;padding:calc(12px + var(--safe-top)) calc(20px + var(--safe-right)) 8px calc(20px + var(--safe-left));font-family:'Space Mono',monospace;font-size:13px;font-weight:700;position:relative;z-index:2}
  
-.appbar{padding:8px 20px 14px;position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center}
+.appbar{padding:8px calc(16px + var(--safe-right)) 14px calc(16px + var(--safe-left));position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:12px}
 .appbar .title{font-family:'Black Han Sans',sans-serif;font-size:24px;letter-spacing:-0.5px;display:flex;align-items:center;gap:8px}
 .appbar .dot{width:10px;height:10px;background:var(--hot);border:1.5px solid var(--ink);border-radius:50%;transform:translateY(-2px);box-shadow:0 0 0 3px rgba(198,40,40,.12)}
 .hactions{display:flex;gap:8px}
@@ -33,23 +33,40 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.12;b
 .ibtn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
 .ibtn .bdg{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--hot);border:2px solid var(--cream);color:#fff;font-size:9px;display:grid;place-items:center;font-weight:900}
  
-.viewport{flex:1;overflow-y:auto;overflow-x:hidden;position:relative;z-index:2;padding-bottom:90px;scrollbar-width:thin}
+.viewport{flex:1;overflow-y:auto;overflow-x:hidden;position:relative;z-index:2;padding-bottom:calc(104px + var(--safe-bottom));scrollbar-width:thin;-webkit-overflow-scrolling:touch}
 .viewport::-webkit-scrollbar{width:4px}
 .viewport::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:4px}
 .page{padding:0 16px 24px;animation:fi .2s ease}
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
  
-.tabnav{position:absolute;bottom:0;left:0;right:0;z-index:10;background:var(--cream);border-top:2px solid var(--ink);padding:10px 8px calc(env(safe-area-inset-bottom,12px) + 12px);display:flex;justify-content:space-around;backdrop-filter:blur(10px)}
+.tabnav{position:absolute;bottom:0;left:0;right:0;z-index:10;background:var(--cream);border-top:2px solid var(--ink);padding:10px calc(8px + var(--safe-right)) calc(10px + var(--safe-bottom)) calc(8px + var(--safe-left));display:flex;justify-content:space-around;backdrop-filter:blur(10px)}
 .tbt{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;color:var(--muted);font-size:11px;font-weight:700;font-family:'Jua',sans-serif;position:relative;transition:color .15s}
 .tbt .ico{font-size:22px;transition:transform .2s}
 .tbt.active{color:var(--ink)}
 .tbt.active .ico{transform:translateY(-2px) scale(1.1)}
 .tbt.active::before{content:"";position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:34px;height:4px;background:var(--hot);border-radius:0 0 4px 4px}
  
-.fab{position:absolute;bottom:100px;right:20px;z-index:8;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--hot),var(--coral));color:var(--cream);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);font-size:26px;display:grid;place-items:center;animation:pls 2s ease-in-out infinite}
+.fab{position:absolute;bottom:calc(92px + var(--safe-bottom));right:calc(18px + var(--safe-right));z-index:8;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--hot),var(--coral));color:var(--cream);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);font-size:26px;display:grid;place-items:center;animation:pls 2s ease-in-out infinite}
 @keyframes pls{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 .fab:active{animation:none;transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
  
+
+/* SCHOOL THEME PICKER */
+.theme-pick{position:absolute;inset:0;z-index:40;background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.08));backdrop-filter:blur(14px);display:none;align-items:flex-end;justify-content:center;padding:18px}
+.theme-pick.show{display:flex}
+.theme-sheet{width:100%;background:var(--cream);border:2.5px solid var(--ink);border-radius:28px;padding:20px 18px 18px;box-shadow:0 18px 60px rgba(0,0,0,.25)}
+.theme-sheet h2{font-family:'Black Han Sans',sans-serif;font-size:28px;letter-spacing:-.8px;line-height:1.1;margin-bottom:8px}
+.theme-sheet p{font-size:13px;color:#55484b;line-height:1.5;margin-bottom:16px;font-weight:600}
+.school-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.school-card{padding:14px 12px;border:2px solid var(--ink);border-radius:18px;background:var(--paper);text-align:left;box-shadow:3px 3px 0 var(--ink);cursor:pointer;transition:transform .12s}
+.school-card:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.school-card .sw{display:flex;gap:6px;margin-bottom:10px}
+.school-card .sw span{display:block;width:18px;height:18px;border-radius:999px;border:1.5px solid var(--ink)}
+.school-card strong{display:block;font-family:'Jua',sans-serif;font-size:15px;line-height:1.2}
+.school-card small{display:block;font-size:11px;color:var(--muted);font-weight:800;margin-top:4px}
+.theme-note{margin-top:12px;font-size:11px;color:var(--muted);text-align:center;font-weight:700}
+@media(max-width:380px){.school-list{grid-template-columns:1fr}.theme-sheet h2{font-size:24px}}
+
 /* HOME */
 .greet{background:var(--hot);color:var(--cream);border:2.5px solid var(--ink);border-radius:20px;padding:14px 18px;box-shadow:4px 4px 0 var(--ink);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;position:relative;overflow:hidden}
 .greet::before{content:"";position:absolute;width:120px;height:120px;right:-30px;top:-30px;background:var(--sun);border:2px solid var(--ink);border-radius:50%;opacity:.4}
@@ -251,6 +268,16 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.12;b
       </div>
     </div>
  
+
+    <div class="theme-pick" id="themePick">
+      <div class="theme-sheet">
+        <h2>Choose your school</h2>
+        <p>처음 학교를 고르면 그 학교 대표 색상으로 MOMENTY 전체 테마가 바뀌어요.</p>
+        <div class="school-list" id="schoolList"></div>
+        <div class="theme-note">한 번 고른 뒤에도 설정 없이 자동 저장됩니다.</div>
+      </div>
+    </div>
+
     <div class="viewport" id="vp"></div>
  
     <button class="fab" id="fab" onclick="openWrite()">✍️</button>
@@ -286,11 +313,21 @@ const BOARDS = [
 ];
 const BOARD_MAP = {}; BOARDS.forEach(b=>BOARD_MAP[b.id]=b);
 const AVATARS = ['🐰','🦊','🐻','🐼','🐶','🐯','🐨','🦁','🐸','🐵','🐹','🐱'];
+
+const SCHOOL_THEMES = [
+  {id:'wisc', name:'UW–Madison', short:'Cardinal', colors:{hot:'#c5050c', lime:'#ffd6d6', sky:'#f6a5a8', sun:'#ff8d8d', violet:'#9b0000', coral:'#d62828', mint:'#ffe2e2', cream:'#fff5f5', paper:'#fffafa', ink:'#220d10', muted:'#89656b', line:'#f1d7db', bg1:'#4a1d25', bg2:'#16090c'}},
+  {id:'usc', name:'USC', short:'Cardinal & Gold', colors:{hot:'#990000', lime:'#ffe3a3', sky:'#ffd36b', sun:'#ffbf47', violet:'#7a0000', coral:'#b71c1c', mint:'#fff2cc', cream:'#fff8ef', paper:'#fffdf8', ink:'#241507', muted:'#8a6d3b', line:'#ead8b6', bg1:'#4b1b12', bg2:'#1b0f08'}},
+  {id:'nyu', name:'NYU', short:'Violet', colors:{hot:'#57068c', lime:'#ead9ff', sky:'#c5a6ff', sun:'#9d6cff', violet:'#3d0462', coral:'#7b2cbf', mint:'#f2e9ff', cream:'#fbf8ff', paper:'#ffffff', ink:'#1d1230', muted:'#706181', line:'#e5daf4', bg1:'#341253', bg2:'#150c21'}},
+  {id:'texas', name:'UT Austin', short:'Burnt Orange', colors:{hot:'#bf5700', lime:'#ffd9bb', sky:'#ffb37a', sun:'#ff9e57', violet:'#8c3f00', coral:'#d16d1f', mint:'#ffe9d7', cream:'#fff8f2', paper:'#fffdfb', ink:'#2d1607', muted:'#8b6a4a', line:'#eddccf', bg1:'#5a2b0b', bg2:'#201106'}},
+  {id:'berkeley', name:'UC Berkeley', short:'Blue & California Gold', colors:{hot:'#003262', lime:'#ffe7a8', sky:'#7fb2e5', sun:'#fdb515', violet:'#002142', coral:'#1e5a96', mint:'#edf5ff', cream:'#fffdf6', paper:'#ffffff', ink:'#0f1b28', muted:'#5c6d7f', line:'#d8e4ef', bg1:'#173a63', bg2:'#091521'}},
+  {id:'dartmouth', name:'Dartmouth', short:'Dartmouth Green', colors:{hot:'#00693e', lime:'#dff5e8', sky:'#7fc8a9', sun:'#31a36a', violet:'#004c2d', coral:'#1d8556', mint:'#edf9f2', cream:'#f7fcf8', paper:'#ffffff', ink:'#102019', muted:'#5b7368', line:'#d8e7de', bg1:'#174b35', bg2:'#0a1812'}}
+];
+
  
 /* ==== SEED DATA ==== */
 function seed() {
   return {
-    user: {name:'Mina', school:'UW–Madison', grade:'24', major:'Communication', avatar:'🐰', bio:'Moments, meetups, and campus stories.', points:1250, darkMode:false, notifOn:true},
+    user: {name:'Mina', school:'UW–Madison', schoolTheme:'wisc', grade:'24', major:'Communication', avatar:'🐰', bio:'Moments, meetups, and campus stories.', points:1250, darkMode:false, notifOn:true},
     posts: [
       {id:'p1', boardId:'issue', title:'🔥 학관 화재?? 지금 소방차 왔음', body:'지금 학관 근처 연기 올라옴. 무슨 일임? 아시는 분?', author:'익명', authorAvatar:'🦊', time:Date.now()-5*60000, likes:342, liked:false, scrapped:false, comments:[{id:'c1', author:'익명', body:'나도 봤음... 소방차 3대 왔어', time:Date.now()-3*60000}]},
       {id:'p2', boardId:'meal', title:'오늘 12시 공대 근처 같이 먹을 사람?', body:'고기정식 먹고싶은데 혼자 가기 애매해서요 ㅠㅠ 같이 가실 분 댓글주세요!', author:'익명', authorAvatar:'🐻', time:Date.now()-15*60000, likes:24, liked:false, scrapped:false, comments:[]},
@@ -448,9 +485,43 @@ function renderPost(p) {
   </div>`;
 }
  
+function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function mixHex(c1, c2, weight=0.5){
+  const hexToRgb = h => {
+    h = h.replace('#','').trim();
+    if (h.length === 3) h = h.split('').map(x=>x+x).join('');
+    const n = parseInt(h,16);
+    return {r:(n>>16)&255,g:(n>>8)&255,b:n&255};
+  };
+  const rgbToHex = ({r,g,b}) => '#' + [r,g,b].map(v => Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('');
+  const a = hexToRgb(c1), b = hexToRgb(c2);
+  return rgbToHex({r:a.r+(b.r-a.r)*weight,g:a.g+(b.g-a.g)*weight,b:a.b+(b.b-a.b)*weight});
+}
 function boardColor(id) {
-  const m = {country:'#ffcdd2', market:'#ef9a9a', meal:'#ff8a80', info:'#e57373', class:'#ad5a5a', timetable:'#ffb3b3', major:'#f8b4b4', job:'#ef9a9a', review:'#c62828', club:'#d97b7b', food:'#e53935', ad:'#ffab91', issue:'#b71c1c', rent:'#f4a6a6'};
-  return m[id] || '#c6ff3d';
+  const hot = cssVar('--hot') || '#c62828';
+  const sun = cssVar('--sun') || '#ff8a80';
+  const sky = cssVar('--sky') || '#ef9a9a';
+  const lime = cssVar('--lime') || '#ffb4b4';
+  const coral = cssVar('--coral') || '#e53935';
+  const violet = cssVar('--violet') || '#b71c1c';
+  const mint = cssVar('--mint') || '#ffcdd2';
+  const palette = {
+    country: mixHex(sky, mint, 0.35),
+    market: mixHex(coral, mint, 0.45),
+    meal: mixHex(sun, lime, 0.35),
+    info: mixHex(hot, mint, 0.55),
+    class: mixHex(violet, sky, 0.45),
+    timetable: mixHex(sky, lime, 0.6),
+    major: mixHex(lime, mint, 0.45),
+    job: mixHex(hot, sun, 0.35),
+    review: mixHex(hot, violet, 0.28),
+    club: mixHex(violet, lime, 0.5),
+    food: mixHex(coral, sun, 0.32),
+    ad: mixHex(sun, mint, 0.3),
+    issue: mixHex(violet, hot, 0.18),
+    rent: mixHex(mint, sky, 0.38)
+  };
+  return palette[id] || lime;
 }
  
 function renderBoards() {
@@ -581,6 +652,7 @@ function renderSettings() {
     <div class="menu-list">
       <div class="mi" onclick="toast('👋 로그아웃은 아직 준비 중')"><div class="ic">🚪</div><div class="lb">로그아웃</div><div class="ar">›</div></div>
       <div class="mi" onclick="toast('💬 고객센터 연결')"><div class="ic">💬</div><div class="lb">고객센터</div><div class="ar">›</div></div>
+      <div class="mi" onclick="document.getElementById('themePick').classList.add('show')"><div class="ic">🎨</div><div class="lb">학교 테마 변경</div><div class="ar">›</div></div>
       <div class="mi" onclick="toast('📋 약관 보기')"><div class="ic">📋</div><div class="lb">이용약관</div><div class="ar">›</div></div>
     </div>
   </div>`;
@@ -903,8 +975,74 @@ function readNotif(id) {
   render();
 }
  
+
+function getThemeById(id){
+  const legacyMap = {ucla:'dartmouth', michigan:'dartmouth'};
+  const resolvedId = legacyMap[id] || id;
+  return SCHOOL_THEMES.find(t=>t.id===resolvedId) || SCHOOL_THEMES[0];
+}
+function applyTheme(themeId){
+  const theme = getThemeById(themeId);
+  const c = theme.colors;
+  const root = document.documentElement;
+  root.style.setProperty('--hot', c.hot);
+  root.style.setProperty('--lime', c.lime);
+  root.style.setProperty('--sky', c.sky);
+  root.style.setProperty('--sun', c.sun);
+  root.style.setProperty('--violet', c.violet);
+  root.style.setProperty('--coral', c.coral);
+  root.style.setProperty('--mint', c.mint);
+  root.style.setProperty('--cream', c.cream);
+  root.style.setProperty('--paper', c.paper);
+  root.style.setProperty('--ink', c.ink);
+  root.style.setProperty('--muted', c.muted);
+  root.style.setProperty('--line', c.line);
+  root.style.setProperty('--bg1', c.bg1);
+  root.style.setProperty('--bg2', c.bg2);
+  state.user.schoolTheme = theme.id;
+  if (!state.user.school || state.user.school === '학교를 선택해보세요') state.user.school = theme.name;
+  save();
+}
+function renderSchoolPicker(){
+  const box = document.getElementById('schoolList');
+  if (!box) return;
+  box.innerHTML = SCHOOL_THEMES.map(t => `
+    <button class="school-card" onclick="selectSchoolTheme('${t.id}')">
+      <div class="sw">
+        <span style="background:${t.colors.hot}"></span>
+        <span style="background:${t.colors.sun}"></span>
+        <span style="background:${t.colors.sky}"></span>
+      </div>
+      <strong>${t.name}</strong>
+      <small>${t.short}</small>
+    </button>
+  `).join('');
+}
+function selectSchoolTheme(themeId){
+  const theme = getThemeById(themeId);
+  state.user.school = theme.name;
+  state.user.schoolTheme = theme.id;
+  applyTheme(theme.id);
+  const picker = document.getElementById('themePick');
+  if (picker) picker.classList.remove('show');
+  render();
+  toast(`🎨 ${theme.name} 테마 적용 완료`);
+}
+function maybeShowSchoolPicker(){
+  renderSchoolPicker();
+  const picker = document.getElementById('themePick');
+  if (!picker) return;
+  if (state.user && state.user.schoolTheme) {
+    applyTheme(state.user.schoolTheme);
+    picker.classList.remove('show');
+  } else {
+    picker.classList.add('show');
+  }
+}
+
 /* ==== INIT ==== */
 go(state.tab || 'home');
+maybeShowSchoolPicker();
 </script>
 </body>
 </html>
