@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>캠퍼즈 Campuzz — 우리 학교 모든 게 다 있어 🎓</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0f0f0f;
+    --cream:#fff8e7;
+    --hot:#ff3ea5;
+    --lime:#c6ff3d;
+    --sky:#3ec1ff;
+    --sun:#ffd23f;
+    --violet:#a06cff;
+    --coral:#ff6b3d;
+    --mint:#6df2a8;
+    --peach:#ffb3a7;
+    --paper:#fffaf0;
+    --muted:#6b6b6b;
+  }
+  [data-theme="dark"]{
+    --ink:#fff8e7;
+    --cream:#161616;
+    --paper:#1d1d1d;
+    --muted:#999;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  html,body{background:var(--cream);color:var(--ink);font-family:'Noto Sans KR',sans-serif;overflow-x:hidden;transition:background .3s,color .3s}
+  body{
+    background-image:
+      radial-gradient(circle at 10% 10%, rgba(255,62,165,.08), transparent 30%),
+      radial-gradient(circle at 90% 30%, rgba(62,193,255,.1), transparent 35%),
+      radial-gradient(circle at 30% 80%, rgba(198,255,61,.12), transparent 30%);
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.35;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.22'/></svg>");
+  }
+  [data-theme="dark"] body::before{opacity:.15}
+
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  .container{max-width:1200px;margin:0 auto;padding:0 24px;position:relative;z-index:2}
+
+  /* ===== NAV ===== */
+  nav{
+    position:sticky;top:0;z-index:50;
+    background:var(--cream);
+    border-bottom:3px solid var(--ink);
+    transition:background .3s;
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:1200px;margin:0 auto;gap:12px}
+  .logo{font-family:'Black Han Sans',sans-serif;font-size:30px;letter-spacing:-1px;display:flex;align-items:center;gap:8px;cursor:pointer}
+  .logo .dot{display:inline-block;width:14px;height:14px;background:var(--hot);border:2px solid var(--ink);border-radius:50%;transform:translateY(-3px)}
+  .nav-links{display:flex;gap:24px;font-weight:700;font-size:15px}
+  .nav-links a{position:relative;padding:4px 0;cursor:pointer}
+  .nav-links a:hover{color:var(--hot)}
+  .nav-right{display:flex;gap:10px;align-items:center}
+  .theme-toggle{
+    width:40px;height:40px;border-radius:50%;border:2px solid var(--ink);
+    background:var(--paper);display:grid;place-items:center;font-size:16px;
+    box-shadow:3px 3px 0 var(--ink);transition:transform .15s;
+  }
+  .theme-toggle:hover{transform:rotate(20deg)}
+  .nav-cta{
+    font-family:'Jua',sans-serif;font-size:15px;
+    background:var(--ink);color:var(--cream);
+    padding:10px 20px;border-radius:999px;border:2px solid var(--ink);
+    box-shadow:4px 4px 0 var(--lime);
+    transition:transform .15s, box-shadow .15s;
+  }
+  .nav-cta:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--lime)}
+  @media (max-width:760px){.nav-links{display:none}}
+
+  /* ===== LIVE TICKER ===== */
+  .ticker{
+    background:var(--ink);color:var(--cream);border-bottom:3px solid var(--ink);
+    padding:10px 0;overflow:hidden;position:relative;display:flex;align-items:center;gap:16px;
+  }
+  .ticker-label{
+    flex:0 0 auto;padding:0 16px;font-family:'Black Han Sans',sans-serif;font-size:14px;
+    display:flex;align-items:center;gap:8px;color:var(--hot);
+  }
+  .ticker-label .dot{width:8px;height:8px;background:var(--hot);border-radius:50%;animation:blink 1s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+  .ticker-feed{flex:1;overflow:hidden;position:relative;height:20px}
+  .ticker-item{
+    position:absolute;width:100%;font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    transform:translateY(20px);transition:transform .5s cubic-bezier(.4,0,.2,1), opacity .4s;opacity:0;
+  }
+  .ticker-item.current{transform:translateY(0);opacity:1}
+  .ticker-item.out{transform:translateY(-20px);opacity:0}
+  .ticker-item .tag-pill{background:var(--lime);color:var(--ink);padding:2px 8px;border-radius:999px;font-weight:700;font-size:11px;margin-right:8px}
+
+  /* ===== HERO ===== */
+  .hero{position:relative;padding:60px 0 100px}
+  .eyebrow{
+    display:inline-block;font-family:'Space Mono',monospace;font-weight:700;font-size:13px;
+    background:var(--sun);border:2px solid var(--ink);padding:6px 14px;border-radius:999px;
+    transform:rotate(-2deg);box-shadow:3px 3px 0 var(--ink);margin-bottom:24px;color:#0f0f0f;
+  }
+  h1.hero-title{
+    font-family:'Black Han Sans',sans-serif;
+    font-size:clamp(48px,8vw,112px);line-height:.95;letter-spacing:-2px;max-width:900px;
+  }
+  h1.hero-title .wave{display:inline-block;color:var(--hot)}
+  h1.hero-title .underline{background:linear-gradient(transparent 65%, var(--lime) 65%);padding:0 6px;color:var(--ink)}
+  h1.hero-title .circle{display:inline-block;position:relative}
+  h1.hero-title .circle::after{content:"";position:absolute;inset:-8px -12px;border:4px solid var(--hot);border-radius:50%;transform:rotate(-6deg)}
+  .hero-sub{margin-top:28px;max-width:560px;font-size:19px;line-height:1.6;font-weight:500;color:var(--muted)}
+  .hero-cta{display:flex;gap:14px;margin-top:36px;flex-wrap:wrap}
+  .btn{
+    font-family:'Jua',sans-serif;font-size:18px;padding:16px 28px;border-radius:999px;border:2.5px solid var(--ink);
+    cursor:pointer;transition:transform .15s, box-shadow .15s;display:inline-flex;align-items:center;gap:10px;
+  }
+  .btn.primary{background:var(--hot);color:var(--cream);box-shadow:6px 6px 0 var(--ink)}
+  .btn.primary:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 var(--ink)}
+  .btn.ghost{background:var(--cream);color:var(--ink);box-shadow:6px 6px 0 var(--sky)}
+  .btn.ghost:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 var(--sky)}
+
+  .hero-meta{display:flex;gap:28px;margin-top:44px;flex-wrap:wrap;align-items:center}
+  .avatars{display:flex}
+  .avatars span{width:40px;height:40px;border-radius:50%;border:3px solid var(--cream);display:inline-block;margin-left:-10px;font-size:22px;text-align:center;line-height:36px;transition:transform .2s;cursor:pointer}
+  .avatars span:hover{transform:translateY(-4px) scale(1.1);z-index:2}
+  .avatars span:nth-child(1){background:var(--hot);margin-left:0}
+  .avatars span:nth-child(2){background:var(--lime)}
+  .avatars span:nth-child(3){background:var(--sky)}
+  .avatars span:nth-child(4){background:var(--sun)}
+  .avatars span:nth-child(5){background:var(--violet)}
+  .hero-meta small{font-weight:700;font-size:13px;color:var(--muted)}
+  .hero-meta strong{color:var(--ink);font-size:15px;display:block}
+
+  .sticker{
+    position:absolute;font-family:'Jua',sans-serif;background:var(--paper);
+    border:2.5px solid var(--ink);border-radius:16px;padding:10px 14px;font-size:15px;
+    box-shadow:4px 4px 0 var(--ink);z-index:3;color:#0f0f0f;
+  }
+  .sticker.s1{top:80px;right:8%;background:var(--lime);--r:6deg;animation:float 4s ease-in-out infinite}
+  .sticker.s2{top:240px;right:22%;background:var(--sky);--r:-5deg;animation:float 5s ease-in-out infinite .5s}
+  .sticker.s3{bottom:120px;right:5%;background:var(--sun);--r:4deg;animation:float 4.5s ease-in-out infinite 1s}
+  .sticker.s4{bottom:60px;left:3%;background:var(--coral);--r:-8deg;color:var(--cream);animation:float 5.5s ease-in-out infinite .3s}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(var(--r,0deg))}50%{transform:translateY(-12px) rotate(var(--r,0deg))}}
+
+  .hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center}
+  @media (max-width:900px){.hero-grid{grid-template-columns:1fr}.sticker{display:none}}
+
+  .phone-wrap{position:relative;display:flex;justify-content:center;align-items:center;min-height:560px}
+  .phone{width:280px;height:560px;background:#0f0f0f;border-radius:44px;padding:10px;box-shadow:12px 12px 0 var(--hot),24px 24px 0 var(--lime);position:relative}
+  .phone-screen{width:100%;height:100%;background:var(--paper);border-radius:34px;overflow:hidden;position:relative}
+  .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:100px;height:22px;background:#0f0f0f;border-radius:999px;z-index:5}
+  .app-header{background:var(--hot);color:var(--cream);padding:44px 18px 18px;font-family:'Black Han Sans',sans-serif;font-size:22px;display:flex;justify-content:space-between;align-items:flex-end}
+  .app-header .bell{background:var(--cream);color:#0f0f0f;width:32px;height:32px;border-radius:50%;border:2px solid #0f0f0f;display:grid;place-items:center;font-size:16px}
+  .app-tabs{display:flex;gap:6px;padding:12px;background:var(--paper);overflow-x:auto;scrollbar-width:none}
+  .app-tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto;padding:6px 12px;border:2px solid #0f0f0f;border-radius:999px;font-size:12px;font-weight:700;background:var(--paper);color:#0f0f0f}
+  .tab.active{background:var(--sun)}
+  .feed{padding:10px 14px;display:flex;flex-direction:column;gap:10px}
+  .feed-post{background:#fffaf0;border:2px solid #0f0f0f;border-radius:14px;padding:12px;box-shadow:3px 3px 0 #0f0f0f;color:#0f0f0f}
+  .feed-post .who{display:flex;justify-content:space-between;font-size:11px;color:#666;margin-bottom:6px;font-weight:700}
+  .feed-post h4{font-family:'Jua',sans-serif;font-size:15px;margin-bottom:4px}
+  .feed-post p{font-size:12px;color:#444;line-height:1.4}
+  .feed-post .meta{display:flex;gap:10px;margin-top:8px;font-size:11px;color:#777;font-weight:700}
+
+  /* ===== MARQUEE ===== */
+  .marquee{background:var(--ink);color:var(--cream);border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);overflow:hidden;padding:18px 0}
+  .marquee-track{display:flex;gap:48px;white-space:nowrap;animation:scroll 28s linear infinite;font-family:'Black Han Sans',sans-serif;font-size:36px;letter-spacing:-1px}
+  .marquee-track span{display:inline-flex;align-items:center;gap:48px}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .marquee:hover .marquee-track{animation-play-state:paused}
+
+  /* ===== SECTION COMMON ===== */
+  .section-eyebrow{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;letter-spacing:2px;color:var(--hot);text-transform:uppercase;margin-bottom:16px}
+  .section-title{font-family:'Black Han Sans',sans-serif;font-size:clamp(40px,6vw,80px);line-height:1;letter-spacing:-1.5px;max-width:800px;margin-bottom:20px}
+  .section-desc{font-size:18px;color:var(--muted);max-width:600px;margin-bottom:56px;line-height:1.6;font-weight:500}
+
+  /* ===== AD SLOTS ===== */
+  .ad-slot{
+    position:relative;background:var(--paper);border:2.5px dashed var(--ink);border-radius:20px;
+    padding:32px 24px;text-align:center;margin:40px 0;overflow:hidden;
+    transition:transform .2s;
+  }
+  .ad-slot::before{
+    content:"AD · 광고 자리";position:absolute;top:12px;left:12px;
+    font-family:'Space Mono',monospace;font-size:10px;font-weight:700;
+    background:var(--ink);color:var(--cream);padding:3px 8px;border-radius:4px;letter-spacing:1px;
+  }
+  .ad-slot.billboard{min-height:180px;background:linear-gradient(135deg,var(--sun),var(--peach))}
+  .ad-slot.billboard .ad-content{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap}
+  .ad-slot.billboard .ad-visual{font-size:72px}
+  .ad-slot.billboard h4{font-family:'Black Han Sans',sans-serif;font-size:32px;letter-spacing:-1px;color:#0f0f0f;line-height:1}
+  .ad-slot.billboard p{color:#0f0f0f;font-weight:500;margin-top:6px}
+  .ad-slot.inline{background:linear-gradient(135deg,var(--sky),var(--mint));padding:20px}
+  .ad-slot.inline .ad-content{display:flex;align-items:center;gap:16px;justify-content:center;flex-wrap:wrap}
+  .ad-slot.inline h4{font-family:'Jua',sans-serif;font-size:20px;color:#0f0f0f}
+  .ad-slot.inline p{color:#0f0f0f;font-size:14px;font-weight:500}
+  .ad-slot.inline .cta{background:#0f0f0f;color:var(--cream);padding:10px 18px;border-radius:999px;font-weight:700;font-size:14px;border:2px solid #0f0f0f}
+  .ad-slot.inline .cta:hover{background:var(--cream);color:#0f0f0f}
+  .ad-slot.small{min-height:100px;padding:20px;display:flex;align-items:center;justify-content:center;gap:14px}
+  .ad-slot.small h4{font-family:'Jua',sans-serif;font-size:16px;color:#0f0f0f}
+  .ad-swap{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);margin-top:8px}
+
+  /* ===== BOARDS SECTION ===== */
+  .boards{padding:100px 0 60px;position:relative}
+  .boards-controls{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px;flex-wrap:wrap;gap:20px}
+  .boards-controls .left{flex:1;min-width:260px}
+  .filter-chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{
+    font-family:'Jua',sans-serif;font-size:13px;padding:8px 14px;border-radius:999px;
+    border:2px solid var(--ink);background:var(--paper);color:var(--ink);
+    box-shadow:2px 2px 0 var(--ink);transition:transform .1s;
+  }
+  .chip:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
+  .chip.active{background:var(--ink);color:var(--cream);box-shadow:2px 2px 0 var(--hot)}
+
+  .board-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:18px;
+  }
+  @media (max-width:900px){.board-grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:500px){.board-grid{grid-template-columns:1fr}}
+
+  .board-card{
+    position:relative;background:var(--paper);border:2.5px solid var(--ink);
+    border-radius:20px;padding:22px 20px;box-shadow:5px 5px 0 var(--ink);
+    cursor:pointer;transition:transform .2s, box-shadow .2s;
+    overflow:hidden;
+  }
+  .board-card:hover{transform:translate(-4px,-4px);box-shadow:9px 9px 0 var(--ink)}
+  .board-card:hover .b-arrow{transform:translate(4px,-4px) rotate(-45deg)}
+  .board-card .b-emoji{font-size:38px;margin-bottom:10px;display:block;transition:transform .3s}
+  .board-card:hover .b-emoji{transform:scale(1.15) rotate(-8deg)}
+  .board-card h3{font-family:'Black Han Sans',sans-serif;font-size:22px;letter-spacing:-.5px;margin-bottom:6px}
+  .board-card p{font-size:13px;color:var(--muted);line-height:1.45;font-weight:500;margin-bottom:14px;min-height:38px}
+  .board-card .b-foot{display:flex;justify-content:space-between;align-items:center;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--muted)}
+  .board-card .b-count{display:inline-flex;align-items:center;gap:5px}
+  .board-card .b-count .pulse{width:6px;height:6px;background:var(--hot);border-radius:50%;animation:blink 1.5s infinite}
+  .board-card .b-arrow{
+    position:absolute;top:18px;right:18px;width:32px;height:32px;
+    background:var(--ink);color:var(--cream);border-radius:50%;
+    display:grid;place-items:center;font-size:14px;font-weight:900;
+    transition:transform .2s;
+  }
+  /* card color variants */
+  .bc-1{background:var(--hot);color:var(--cream)}
+  .bc-1 p,.bc-1 .b-foot{color:rgba(255,248,231,.85)}
+  .bc-1 .b-arrow{background:var(--cream);color:var(--hot)}
+  .bc-2{background:var(--lime)}
+  .bc-3{background:var(--sky)}
+  .bc-4{background:var(--sun)}
+  .bc-5{background:var(--violet);color:var(--cream)}
+  .bc-5 p,.bc-5 .b-foot{color:rgba(255,248,231,.85)}
+  .bc-5 .b-arrow{background:var(--cream);color:var(--violet)}
+  .bc-6{background:var(--coral);color:var(--cream)}
+  .bc-6 p,.bc-6 .b-foot{color:rgba(255,248,231,.85)}
+  .bc-6 .b-arrow{background:var(--cream);color:var(--coral)}
+  .bc-7{background:var(--mint)}
+  .bc-8{background:var(--peach)}
+
+  .board-card.hidden{display:none}
+
+  /* ===== FEATURES SHORT ===== */
+  .features{padding:80px 0;position:relative}
+  .feat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media (max-width:800px){.feat-row{grid-template-columns:1fr}}
+  .feat-card{
+    background:var(--paper);border:3px solid var(--ink);border-radius:24px;
+    padding:28px;box-shadow:6px 6px 0 var(--ink);transition:transform .2s,box-shadow .2s;
+  }
+  .feat-card:hover{transform:translate(-4px,-4px);box-shadow:10px 10px 0 var(--ink)}
+  .feat-card .icon{width:58px;height:58px;border-radius:18px;border:2.5px solid var(--ink);display:grid;place-items:center;font-size:28px;margin-bottom:18px;box-shadow:3px 3px 0 var(--ink);background:var(--hot);color:var(--cream)}
+  .feat-card:nth-child(2) .icon{background:var(--lime);color:#0f0f0f}
+  .feat-card:nth-child(3) .icon{background:var(--sky);color:#0f0f0f}
+  .feat-card h3{font-family:'Jua',sans-serif;font-size:22px;margin-bottom:10px;letter-spacing:-.5px}
+  .feat-card p{color:var(--muted);line-height:1.6;font-size:15px;font-weight:500}
+
+  /* ===== STATS ===== */
+  .stats{padding:80px 0;background:var(--ink);color:var(--cream);border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);position:relative}
+  .stats [data-theme-ignore]{}
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:40px;text-align:center}
+  @media (max-width:800px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+  .stat .num{font-family:'Black Han Sans',sans-serif;font-size:clamp(48px,7vw,88px);line-height:1;letter-spacing:-2px;color:var(--lime)}
+  .stat:nth-child(2) .num{color:var(--hot)}
+  .stat:nth-child(3) .num{color:var(--sky)}
+  .stat:nth-child(4) .num{color:var(--sun)}
+  .stat .label{font-family:'Jua',sans-serif;font-size:16px;margin-top:8px;color:rgba(255,248,231,.85)}
+
+  /* ===== TESTIMONIALS ===== */
+  .testimonials{padding:100px 0 60px;position:relative}
+  .bubbles{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  @media (max-width:900px){.bubbles{grid-template-columns:1fr}}
+  .bubble{background:var(--paper);border:3px solid var(--ink);border-radius:24px;padding:24px;position:relative;box-shadow:6px 6px 0 var(--ink);color:#0f0f0f}
+  .bubble::before{content:"";position:absolute;bottom:-18px;left:36px;width:22px;height:22px;background:var(--paper);border-right:3px solid var(--ink);border-bottom:3px solid var(--ink);transform:rotate(45deg)}
+  .bubble.b1{transform:rotate(-1deg);background:var(--lime)}
+  .bubble.b1::before{background:var(--lime)}
+  .bubble.b2{transform:rotate(1deg);background:var(--sky);margin-top:30px}
+  .bubble.b2::before{background:var(--sky)}
+  .bubble.b3{transform:rotate(-.5deg);background:var(--sun)}
+  .bubble.b3::before{background:var(--sun)}
+  .bubble p{font-size:17px;line-height:1.5;font-weight:500;margin-bottom:16px;font-family:'Gaegu',cursive}
+  .bubble .who{display:flex;align-items:center;gap:12px;margin-top:30px}
+  .bubble .who .ava{width:44px;height:44px;border-radius:50%;border:2.5px solid #0f0f0f;display:grid;place-items:center;font-size:22px;background:#fff8e7}
+  .bubble .who strong{font-family:'Jua',sans-serif;font-size:16px;display:block}
+  .bubble .who small{font-size:13px;color:#444;font-weight:700}
+
+  /* ===== CTA ===== */
+  .cta{padding:100px 0;text-align:center;position:relative}
+  .cta-box{background:var(--hot);color:var(--cream);border:4px solid var(--ink);border-radius:40px;padding:80px 40px;box-shadow:12px 12px 0 var(--ink);position:relative;overflow:hidden}
+  .cta-box::before{content:"";position:absolute;inset:0;opacity:.35;pointer-events:none;background-image:radial-gradient(circle at 20% 20%, var(--sun) 0, transparent 14%),radial-gradient(circle at 80% 30%, var(--lime) 0, transparent 16%),radial-gradient(circle at 30% 80%, var(--sky) 0, transparent 14%),radial-gradient(circle at 85% 75%, var(--violet) 0, transparent 14%)}
+  .cta h2{font-family:'Black Han Sans',sans-serif;font-size:clamp(44px,7vw,96px);line-height:.95;letter-spacing:-2px;margin-bottom:20px;position:relative;z-index:1}
+  .cta p{font-size:18px;max-width:500px;margin:0 auto 32px;line-height:1.6;font-weight:500;position:relative;z-index:1}
+  .cta .btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+  .cta .btn.primary{background:var(--ink);color:var(--cream);box-shadow:6px 6px 0 var(--lime)}
+  .cta .btn.primary:hover{box-shadow:9px 9px 0 var(--lime)}
+  .cta .btn.ghost{background:var(--cream);color:var(--ink);box-shadow:6px 6px 0 var(--sun)}
+  .cta .btn.ghost:hover{box-shadow:9px 9px 0 var(--sun)}
+
+  /* ===== FOOTER ===== */
+  footer{background:#0f0f0f;color:#fff8e7;padding:60px 0 40px;border-top:3px solid var(--ink)}
+  .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+  @media (max-width:800px){.foot-grid{grid-template-columns:1fr 1fr}}
+  .foot-grid h5{font-family:'Jua',sans-serif;font-size:15px;margin-bottom:14px;color:var(--lime)}
+  .foot-grid ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .foot-grid a{font-size:14px;color:rgba(255,248,231,.75)}
+  .foot-grid a:hover{color:#fff8e7}
+  .foot-brand p{color:rgba(255,248,231,.6);font-size:14px;margin-top:12px;line-height:1.5;max-width:340px}
+  .foot-bottom{border-top:2px solid rgba(255,248,231,.15);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+  .foot-bottom small{color:rgba(255,248,231,.5);font-size:13px}
+  .social{display:flex;gap:10px}
+  .social a{width:38px;height:38px;border:2px solid #fff8e7;border-radius:50%;display:grid;place-items:center;font-size:16px;transition:background .15s,color .15s}
+  .social a:hover{background:var(--lime);color:#0f0f0f;border-color:var(--lime)}
+
+  /* ===== MODAL ===== */
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;z-index:100;align-items:center;justify-content:center;padding:20px}
+  .modal-bg.open{display:flex;animation:fadeIn .2s}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .modal{background:var(--cream);border:3px solid var(--ink);border-radius:24px;max-width:440px;width:100%;padding:32px;box-shadow:10px 10px 0 var(--hot);position:relative;animation:pop .3s cubic-bezier(.68,-.55,.27,1.55)}
+  @keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+  .modal .close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;border:2px solid var(--ink);background:var(--paper);font-weight:900}
+  .modal .m-emoji{font-size:56px;margin-bottom:12px}
+  .modal h3{font-family:'Black Han Sans',sans-serif;font-size:30px;letter-spacing:-.8px;margin-bottom:8px}
+  .modal p{color:var(--muted);line-height:1.6;margin-bottom:16px}
+  .modal .preview-posts{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+  .modal .preview-post{background:var(--paper);border:2px solid var(--ink);border-radius:12px;padding:10px 12px;font-size:13px;display:flex;justify-content:space-between;gap:8px}
+  .modal .preview-post strong{font-weight:700;flex:1}
+  .modal .preview-post small{color:var(--muted);font-family:'Space Mono',monospace;font-size:11px;white-space:nowrap}
+  .modal .btn{width:100%;justify-content:center}
+
+  /* ===== TOAST ===== */
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--cream);padding:12px 22px;border-radius:999px;font-size:14px;font-weight:700;opacity:0;transition:all .25s;z-index:200;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ===== REVEAL ===== */
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
+  .reveal.in{opacity:1;transform:none}
+
+  /* scroll-to-top */
+  .scroll-top{
+    position:fixed;bottom:24px;right:24px;z-index:40;
+    width:52px;height:52px;border-radius:50%;border:3px solid var(--ink);
+    background:var(--hot);color:var(--cream);font-size:20px;
+    box-shadow:4px 4px 0 var(--ink);
+    display:grid;place-items:center;opacity:0;pointer-events:none;
+    transition:opacity .2s, transform .1s;
+  }
+  .scroll-top.show{opacity:1;pointer-events:auto}
+  .scroll-top:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})"><span class="dot"></span>캠퍼즈<span style="font-family:'Space Mono',monospace;font-size:13px;margin-left:6px;color:var(--muted)">™</span></div>
+    <div class="nav-links">
+      <a href="#boards">게시판</a>
+      <a href="#features">기능</a>
+      <a href="#stats">숫자로 보기</a>
+      <a href="#love">후기</a>
+      <a href="#download">다운로드</a>
+    </div>
+    <div class="nav-right">
+      <button class="theme-toggle" id="themeToggle" title="테마 변경">🌞</button>
+      <a href="#download" class="nav-cta">앱 받기 →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ LIVE TICKER ============ -->
+<div class="ticker">
+  <div class="ticker-label"><span class="dot"></span>LIVE 실시간</div>
+  <div class="ticker-feed" id="tickerFeed"></div>
+</div>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="container">
+    <div class="sticker s1">📚 시간표 뚝딱</div>
+    <div class="sticker s2">💬 익명 가능</div>
+    <div class="sticker s3">🍚 오늘 학식 뭐임?</div>
+    <div class="sticker s4">⭐ 강의평 4.8</div>
+
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">▸ 전국 400개 대학 전용 🎓</span>
+        <h1 class="hero-title">
+          <span class="wave">우리 학교</span>의<br>
+          <span class="underline">모든 것</span>이<br>
+          <span class="circle">여기</span> 있어.
+        </h1>
+        <p class="hero-sub">
+          14개 게시판으로 연결된 진짜 캠퍼스. 밥약부터 중고거래, 렌트4U, 나라별 게시판까지.
+          선배들이 쌓아온 진짜 정보, 지금 들어와.
+        </p>
+        <div class="hero-cta">
+          <a href="#download" class="btn primary">📱 앱스토어에서 받기</a>
+          <a href="#boards" class="btn ghost">▶ 게시판 구경하기</a>
+        </div>
+        <div class="hero-meta">
+          <div class="avatars">
+            <span>🐻</span><span>🐰</span><span>🦊</span><span>🐼</span><span>🐶</span>
+          </div>
+          <div>
+            <strong>이미 320만+ 대학생이 쓰는 중</strong>
+            <small>★★★★★ 4.8 · 앱스토어 교육 1위</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="phone-screen">
+            <div class="app-header">
+              <div>안녕, 민지야 👋<br><span style="font-family:'Noto Sans KR';font-size:12px;font-weight:500;opacity:.85">중앙대학교 22학번</span></div>
+              <div class="bell">🔔</div>
+            </div>
+            <div class="app-tabs">
+              <span class="tab active">홈</span>
+              <span class="tab">밥약</span>
+              <span class="tab">장터</span>
+              <span class="tab">렌트4U</span>
+              <span class="tab">맛집</span>
+            </div>
+            <div class="feed">
+              <div class="feed-post">
+                <div class="who"><span>🍚 밥약</span><span>3분 전</span></div>
+                <h4>내일 점심 학관에서 같이 드실 분!</h4>
+                <p>새내기인데 혼밥 너무 심심함 🥲 1시쯤 만나요</p>
+                <div class="meta"><span>❤️ 42</span><span>💬 18</span></div>
+              </div>
+              <div class="feed-post">
+                <div class="who"><span>🔑 렌트4U</span><span>1시간 전</span></div>
+                <h4>계산기 빌려드려요 (시험기간 특가)</h4>
+                <p>공학용 fx-570 · 하루 1,000원 · 보증금 X</p>
+                <div class="meta"><span>❤️ 128</span><span>💬 31</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>밥약 ✦ 중고거래 ✦ 렌트4U ✦ 맛집 ✦ 시간표 공유 ✦ 같은 수업 ✦ 나라별 ✦ 강의후기 ✦ 동아리 ✦ 이슈 ✦ 전공별 ✦ 취업 ✦ 정보 ✦&nbsp;</span>
+    <span>밥약 ✦ 중고거래 ✦ 렌트4U ✦ 맛집 ✦ 시간표 공유 ✦ 같은 수업 ✦ 나라별 ✦ 강의후기 ✦ 동아리 ✦ 이슈 ✦ 전공별 ✦ 취업 ✦ 정보 ✦&nbsp;</span>
+  </div>
+</div>
+
+<!-- ============ AD SLOT #1 (Billboard) ============ -->
+<div class="container">
+  <div class="ad-slot billboard reveal">
+    <div class="ad-content">
+      <div class="ad-visual">🎓</div>
+      <div>
+        <h4>우리 학교 대표 카페 · 커피빈</h4>
+        <p>학생증 보여주면 아메리카노 2,500원! 📚☕</p>
+      </div>
+      <a href="#" class="btn ghost" style="background:var(--ink);color:var(--cream);box-shadow:4px 4px 0 #fff">쿠폰 받기 →</a>
+    </div>
+    <div class="ad-swap">이 자리에 광고가 들어갑니다 · 대학생 타겟 300만 노출</div>
+  </div>
+</div>
+
+<!-- ============ BOARDS SECTION ============ -->
+<section class="boards" id="boards">
+  <div class="container">
+    <div class="boards-controls">
+      <div class="left">
+        <div class="section-eyebrow reveal">◎ 14 BOARDS</div>
+        <h2 class="section-title reveal">원하는 게시판,<br>하나쯤은 있어.</h2>
+        <p class="section-desc reveal" style="margin-bottom:28px">어떤 얘기를 하고 싶어? 아래 필터로 골라봐.</p>
+      </div>
+    </div>
+
+    <div class="filter-chips reveal" id="filterChips" style="margin-bottom:32px">
+      <button class="chip active" data-filter="all">전체 14</button>
+      <button class="chip" data-filter="community">커뮤니티</button>
+      <button class="chip" data-filter="life">생활</button>
+      <button class="chip" data-filter="academic">학업</button>
+      <button class="chip" data-filter="career">커리어</button>
+      <button class="chip" data-filter="info">정보</button>
+    </div>
+
+    <div class="board-grid" id="boardGrid">
+      <!-- injected by JS -->
+    </div>
+
+    <!-- AD SLOT #2 (Inline between boards) -->
+    <div class="ad-slot inline reveal" style="margin-top:40px">
+      <div class="ad-content">
+        <div style="font-size:36px">📱</div>
+        <div>
+          <h4>네 브랜드를 캠퍼즈에!</h4>
+          <p>MZ 대학생 320만에게 정확히 전달되는 광고</p>
+        </div>
+        <a href="#" class="cta">광고 문의 →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES ============ -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-eyebrow reveal">◎ WHY US</div>
+    <h2 class="section-title reveal">왜 캠퍼즈야?</h2>
+    <p class="section-desc reveal">커뮤니티 그 이상. 대학 생활의 모든 순간이 여기 있어.</p>
+
+    <div class="feat-row">
+      <div class="feat-card reveal">
+        <div class="icon">🔐</div>
+        <h3>학교 메일 인증제</h3>
+        <p>우리 학교 학생들만. 외부인 없음. 인증된 선배 후배가 쌓는 찐 정보만 모여.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="icon">🎭</div>
+        <h3>진짜 익명 보장</h3>
+        <p>필명도 랜덤. 너의 이야기를 편하게 풀어놔. 비밀게시판은 완전 익명이야.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="icon">⚡</div>
+        <h3>실시간 밥약 & 렌트</h3>
+        <p>지금 배고파? 뭐 빌리고 싶어? 같은 학교 학생들이 실시간으로 응답해.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STATS ============ -->
+<section class="stats" id="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat reveal"><div class="num" data-count="3200000" data-suffix="+">0</div><div class="label">월간 활성 유저</div></div>
+      <div class="stat reveal"><div class="num" data-count="400" data-suffix="+">0</div><div class="label">전국 제휴 대학</div></div>
+      <div class="stat reveal"><div class="num" data-count="14">0</div><div class="label">전용 게시판</div></div>
+      <div class="stat reveal"><div class="num" data-count="4.8" data-decimals="1" data-suffix="★">0</div><div class="label">앱스토어 평점</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section class="testimonials" id="love">
+  <div class="container">
+    <div class="section-eyebrow reveal">◎ REAL TALK</div>
+    <h2 class="section-title reveal">다들 이러고 삼.</h2>
+    <p class="section-desc reveal">실제 유저들이 남긴 찐 후기. 필터링 1도 없음.</p>
+
+    <div class="bubbles">
+      <div class="bubble b1 reveal">
+        <p>"밥약 게시판 없으면 새내기 때 어떻게 살았지... 덕분에 평생 친구 만났음 🥹"</p>
+        <div class="who"><div class="ava">🦊</div><div><strong>익명의 곰돌이</strong><small>연세대 · 3학년</small></div></div>
+      </div>
+      <div class="bubble b2 reveal">
+        <p>"렌트4U에서 계산기 빌려서 시험 통과. 진짜 이 앱 없이는 살 수가 없음 ㄹㅇ"</p>
+        <div class="who"><div class="ava">🐰</div><div><strong>새벽공부러버</strong><small>성균관대 · 2학년</small></div></div>
+      </div>
+      <div class="bubble b3 reveal">
+        <p>"나라별 게시판에서 교환학생 정보 다 얻음. 일본 가는데 현지 팁 대박이었음"</p>
+        <div class="who"><div class="ava">🐻</div><div><strong>도쿄드림</strong><small>부산대 · 4학년</small></div></div>
+      </div>
+    </div>
+
+    <!-- AD SLOT #3 (Small between sections) -->
+    <div class="ad-slot small reveal" style="margin-top:50px">
+      <div style="font-size:32px">🍔</div>
+      <div>
+        <h4>우리 학교 근처 맛집 · 수제버거 '버거리'</h4>
+        <p style="font-size:13px;color:#444;margin-top:2px">학생증 보여주면 감자튀김 무료 🍟</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta" id="download">
+  <div class="container">
+    <div class="cta-box reveal">
+      <h2>너도 캠퍼즈 고?<br>지금 시작해.</h2>
+      <p>학교 이메일 하나면 끝. 가입 10초, 인생은 훨씬 편해져.</p>
+      <div class="btns">
+        <a href="#" class="btn primary" onclick="toast('📱 App Store로 이동');return false">📱 App Store</a>
+        <a href="#" class="btn ghost" onclick="toast('🤖 Google Play로 이동');return false">🤖 Google Play</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo" style="color:#fff8e7"><span class="dot"></span>캠퍼즈</div>
+        <p>대학생을 위한 올인원 커뮤니티 플랫폼. 14개 게시판으로 완성되는 진짜 캠퍼스 라이프.</p>
+      </div>
+      <div>
+        <h5>인기 게시판</h5>
+        <ul>
+          <li><a href="#" onclick="openBoard('bap');return false">밥약</a></li>
+          <li><a href="#" onclick="openBoard('rent');return false">렌트4U</a></li>
+          <li><a href="#" onclick="openBoard('market');return false">중고거래</a></li>
+          <li><a href="#" onclick="openBoard('food');return false">맛집</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>회사</h5>
+        <ul>
+          <li><a href="#">소개</a></li>
+          <li><a href="#">채용</a></li>
+          <li><a href="#">광고문의</a></li>
+          <li><a href="#">제휴</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>법적 고지</h5>
+        <ul>
+          <li><a href="#">이용약관</a></li>
+          <li><a href="#">개인정보처리방침</a></li>
+          <li><a href="#">청소년보호</a></li>
+          <li><a href="#">커뮤니티 가이드</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <small>© 2026 Campuzz Inc. Made with 💛 in Seoul.</small>
+      <div class="social">
+        <a href="#" aria-label="Instagram" onclick="toast('📸 인스타 팔로우!');return false">📸</a>
+        <a href="#" aria-label="Twitter" onclick="toast('🐦 트위터!');return false">🐦</a>
+        <a href="#" aria-label="YouTube" onclick="toast('▶ 유튜브!');return false">▶</a>
+        <a href="#" aria-label="Discord" onclick="toast('🎮 디스코드!');return false">🎮</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ MODAL ============ -->
+<div class="modal-bg" id="modalBg" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="close" onclick="closeModal()">✕</button>
+    <div class="m-emoji" id="mEmoji">🍚</div>
+    <h3 id="mTitle">밥약 게시판</h3>
+    <p id="mDesc">같이 밥 먹을 사람 찾기. 새내기도 선배도 환영 🍱</p>
+    <div class="preview-posts" id="mPosts"></div>
+    <button class="btn primary" onclick="toast('📱 앱에서 확인해보세요!');closeModal()">앱에서 구경하기 →</button>
+  </div>
+</div>
+
+<!-- ============ TOAST ============ -->
+<div class="toast" id="toast">안녕!</div>
+
+<!-- ============ SCROLL TOP ============ -->
+<button class="scroll-top" id="scrollTop" aria-label="맨 위로" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  // ================== DATA ==================
+  const BOARDS = [
+    {id:'country', emoji:'🌏', name:'나라별 게시판', desc:'교환학생·유학 정보부터 여행 꿀팁까지. 50개국 정보.', color:'bc-3', tag:'info', count:'2.1K', posts:['일본 교환학생 3개월차 후기 🇯🇵','호주 워홀 비자 질문 있어요','미국 인턴십 찐팁 공유해요']},
+    {id:'market', emoji:'🛍️', name:'중고거래 게시판', desc:'교재부터 자전거까지. 우리 학교 학생끼리 안전하게.', color:'bc-2', tag:'life', count:'8.7K', posts:['경제학원론 2판 5천원에 팝니다','기숙사 미니냉장고 급처 🙏','자전거 미개봉 20만원 → 12만원']},
+    {id:'bap', emoji:'🍚', name:'밥약 게시판', desc:'혼밥 싫어? 같이 먹을 사람 구해. 학식/배달/외식 전부.', color:'bc-1', tag:'life', count:'3.4K', posts:['내일 12시 학관에서 같이 드실 분','저녁에 치킨 시킬 사람 모집','기숙사 새내기 밥친구 구함 🥹']},
+    {id:'info', emoji:'💡', name:'정보 게시판', desc:'장학금·공모전·행사. 놓치면 손해보는 정보들.', color:'bc-4', tag:'info', count:'5.2K', posts:['교내 장학금 신청 마감 D-3','공모전 팀원 모집 (디자인)','학사일정 변경사항 공유해요']},
+    {id:'sameclass', emoji:'📚', name:'같은 수업 게시판', desc:'수강신청한 과목별로 자동 연결. 과제·시험 공유.', color:'bc-7', tag:'academic', count:'12K', posts:['선형대수 중간 범위 정리본','경영학원론 과제 어떻게 함?','오늘 수업 결강이래요!']},
+    {id:'timetable', emoji:'🗓️', name:'시간표 공유', desc:'선배 시간표 뜯어보기. 꿀강 조합은 이렇게.', color:'bc-8', tag:'academic', count:'4.1K', posts:['공강 3일 만든 시간표 공유 ㅎㅎ','4학년 취준용 시간표','2학년 전공 루트 추천']},
+    {id:'major', emoji:'📖', name:'전공별 게시판', desc:'우리 과 사람들만의 공간. 학번별 커뮤니티.', color:'bc-5', tag:'academic', count:'9.3K', posts:['경영학과 복수전공 질문','컴공 4학년 진로 고민...','미대 졸업작품 팁 주세요']},
+    {id:'job', emoji:'💼', name:'취업 게시판', desc:'인턴·정규직·자소서 첨삭. 네카라쿠배 공채 정보.', color:'bc-1', tag:'career', count:'6.8K', posts:['네이버 면접 후기 (실시간)','자소서 첨삭 해드려요 💪','대기업 인턴 합격 후기']},
+    {id:'review', emoji:'⭐', name:'강의 후기', desc:'12만 선배의 진짜 후기. A+ 받기 쉬운 수업은?', color:'bc-4', tag:'academic', count:'15K', posts:['김철수 교수님 선형대수 후기','박혜진 교수님 UX 꿀강 인정','심리학개론 진짜 재밌음']},
+    {id:'club', emoji:'🎯', name:'동아리 게시판', desc:'400+ 동아리 정보. 중앙·학과·자율 전부.', color:'bc-5', tag:'community', count:'2.7K', posts:['스쿠버다이빙 동아리 모집 🤿','밴드부 보컬 오디션 공지','댄스 동아리 신입 환영해요']},
+    {id:'food', emoji:'🍜', name:'맛집 게시판', desc:'학교 앞 찐맛집 지도. 가격·줄 길이까지 공유.', color:'bc-6', tag:'life', count:'4.5K', posts:['교문 앞 신상 파스타집 인정','학식보다 싸고 맛있는 집 ㅋ','학교 근처 브런치 top 5']},
+    {id:'ad', emoji:'📢', name:'광고 게시판', desc:'과외·스터디원·행사홍보. 학생이 올리는 광고.', color:'bc-7', tag:'community', count:'1.8K', posts:['수능 수학 과외 모집 (학생증 인증)','토익 스터디원 구해요 (월/수)','학교 축제 DJ 공연 예매 오픈']},
+    {id:'issue', emoji:'🔥', name:'이슈 게시판', desc:'지금 학교에서 제일 뜨거운 이야기. 실시간 핫토픽.', color:'bc-6', tag:'community', count:'9.1K', posts:['🔥 총학생회장 선거 결과','도서관 리모델링 어떰?','새 학식 가격 인상 말도 안됨']},
+    {id:'rent', emoji:'🔑', name:'렌트4U', desc:'교내 물건 대여 현황. 계산기·우산·보조배터리 실시간.', color:'bc-8', tag:'life', count:'3.2K', posts:['공학용 계산기 하루 1,000원','우산 대여합니다 (비 올 때만)','보조배터리 풀충전 500원/3시간']},
+  ];
+
+  const TICKER_ITEMS = [
+    {tag:'밥약', text:'새내기인데 내일 점심 같이 드실 분 🥲'},
+    {tag:'렌트4U', text:'공학용 계산기 빌려드려요 (시험기간 특가)'},
+    {tag:'이슈', text:'총학생회장 선거 결과 방금 발표됨 🔥'},
+    {tag:'맛집', text:'교문 앞 신상 파스타집 진짜 맛있음 ㅁㅊ'},
+    {tag:'중고거래', text:'기숙사 미니냉장고 급처 3만원 🙏'},
+    {tag:'강의후기', text:'김철수 교수님 선형대수 진짜 꿀강 ㄹㅇ'},
+    {tag:'나라별', text:'일본 교환학생 3개월차 현지 팁 공유합니다'},
+    {tag:'취업', text:'네이버 면접 실시간 후기 (방금 끝남)'},
+    {tag:'정보', text:'교내 장학금 마감 D-3 놓치면 손해 ⚠️'},
+    {tag:'동아리', text:'스쿠버다이빙 동아리 신입 모집 중 🤿'},
+    {tag:'시간표', text:'공강 3일 만든 마법의 시간표 공유해요'},
+    {tag:'같은수업', text:'선형대수 중간고사 범위 정리본 올림'},
+  ];
+
+  // ================== RENDER BOARDS ==================
+  function renderBoards(filter='all'){
+    const grid = document.getElementById('boardGrid');
+    grid.innerHTML = BOARDS.map((b,i)=>{
+      const hidden = (filter!=='all' && b.tag!==filter) ? 'hidden':'';
+      return `
+        <div class="board-card ${b.color} ${hidden}" onclick="openBoard('${b.id}')" style="animation-delay:${i*40}ms">
+          <div class="b-arrow">↗</div>
+          <span class="b-emoji">${b.emoji}</span>
+          <h3>${b.name}</h3>
+          <p>${b.desc}</p>
+          <div class="b-foot">
+            <span class="b-count"><span class="pulse"></span>${b.count} 실시간</span>
+            <span>열기 →</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+  renderBoards();
+
+  // Filter chips
+  document.querySelectorAll('#filterChips .chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      document.querySelectorAll('#filterChips .chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      const f = chip.dataset.filter;
+      // re-render with filter (animated)
+      const cards = document.querySelectorAll('.board-card');
+      cards.forEach(card=>{
+        card.style.opacity='0';
+        card.style.transform='translateY(10px)';
+      });
+      setTimeout(()=>{
+        renderBoards(f);
+        document.querySelectorAll('.board-card').forEach((card,i)=>{
+          card.style.opacity='0';
+          card.style.transform='translateY(10px)';
+          setTimeout(()=>{
+            card.style.transition='opacity .35s, transform .35s';
+            card.style.opacity='1';
+            card.style.transform='';
+          }, i*30);
+        });
+      },180);
+    });
+  });
+
+  // ================== MODAL ==================
+  const modalBg = document.getElementById('modalBg');
+  function openBoard(id){
+    const b = BOARDS.find(x=>x.id===id);
+    if(!b) return;
+    document.getElementById('mEmoji').textContent = b.emoji;
+    document.getElementById('mTitle').textContent = b.name;
+    document.getElementById('mDesc').textContent = b.desc;
+    document.getElementById('mPosts').innerHTML = b.posts.map((p,i)=>`
+      <div class="preview-post"><strong>${p}</strong><small>${Math.floor(Math.random()*59)+1}분 전</small></div>
+    `).join('');
+    modalBg.classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+  function closeModal(e){
+    if(e && e.target.closest('.modal')) return;
+    modalBg.classList.remove('open');
+    document.body.style.overflow='';
+  }
+  document.addEventListener('keydown',e=>{if(e.key==='Escape') closeModal()});
+
+  // ================== TOAST ==================
+  let toastTimer;
+  function toast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>t.classList.remove('show'),1800);
+  }
+
+  // ================== LIVE TICKER ==================
+  const feed = document.getElementById('tickerFeed');
+  TICKER_ITEMS.forEach((it,i)=>{
+    const div = document.createElement('div');
+    div.className='ticker-item'+(i===0?' current':'');
+    div.innerHTML=`<span class="tag-pill">${it.tag}</span>${it.text}`;
+    feed.appendChild(div);
+  });
+  let tIdx = 0;
+  setInterval(()=>{
+    const items = feed.querySelectorAll('.ticker-item');
+    items[tIdx].classList.remove('current');
+    items[tIdx].classList.add('out');
+    setTimeout(()=>items[tIdx].classList.remove('out'), 500);
+    tIdx = (tIdx+1) % items.length;
+    items[tIdx].classList.add('current');
+  },3000);
+
+  // ================== REVEAL ON SCROLL ==================
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach((e,i)=>{
+      if(e.isIntersecting){
+        setTimeout(()=>e.target.classList.add('in'), i*60);
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // ================== COUNTER ANIMATION ==================
+  function animateCount(el){
+    const target = parseFloat(el.dataset.count);
+    const decimals = parseInt(el.dataset.decimals || '0');
+    const suffix = el.dataset.suffix || '';
+    const duration = 1800;
+    const start = performance.now();
+    function tick(now){
+      const p = Math.min(1, (now-start)/duration);
+      const eased = 1 - Math.pow(1-p, 3);
+      const val = target * eased;
+      let display;
+      if(target >= 1000000) display = (val/1000000).toFixed(decimals||1).replace(/\.0$/,'')+'M';
+      else if(target >= 10000) display = Math.floor(val/10000)+'만';
+      else if(decimals>0) display = val.toFixed(decimals);
+      else display = Math.floor(val);
+      el.textContent = display + suffix;
+      if(p<1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  const statsIO = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.querySelectorAll('[data-count]').forEach(el=>animateCount(el));
+        statsIO.unobserve(e.target);
+      }
+    });
+  },{threshold:.3});
+  statsIO.observe(document.getElementById('stats'));
+
+  // ================== THEME TOGGLE ==================
+  const themeBtn = document.getElementById('themeToggle');
+  themeBtn.addEventListener('click',()=>{
+    const cur = document.documentElement.dataset.theme;
+    if(cur==='dark'){
+      document.documentElement.removeAttribute('data-theme');
+      themeBtn.textContent='🌞';
+    } else {
+      document.documentElement.dataset.theme='dark';
+      themeBtn.textContent='🌙';
+    }
+    toast(cur==='dark' ? '☀️ 라이트 모드' : '🌙 다크 모드');
+  });
+
+  // ================== SCROLL TO TOP ==================
+  const scrollBtn = document.getElementById('scrollTop');
+  window.addEventListener('scroll',()=>{
+    scrollBtn.classList.toggle('show', window.scrollY > 400);
+  });
+
+  // ================== EASTER EGG ==================
+  document.querySelectorAll('.avatars span').forEach(sp=>{
+    sp.addEventListener('click',()=>{
+      toast(`${sp.textContent} 안녕!`);
+      sp.style.animation='none';
+      setTimeout(()=>sp.style.animation='float 0.8s ease',10);
+    });
+  });
+
+  // Logo wobble
+  document.querySelectorAll('.logo').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{
+      el.style.transition='transform .3s cubic-bezier(.68,-.55,.27,1.55)';
+      el.style.transform='rotate(-3deg) scale(1.05)';
+      setTimeout(()=>el.style.transform='',400);
+    });
+  });
+
+  // Console love letter
+  console.log('%c🎓 캠퍼즈에 오신 걸 환영합니다!','font-size:20px;font-weight:900;color:#ff3ea5');
+  console.log('%cMade with 💛 in Seoul · campuzz@team.kr','color:#888');
+</script>
+</body>
+</html>
